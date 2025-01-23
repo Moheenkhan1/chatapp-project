@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import StarBorder from '../components/StarBorderButton';
 
 const MainChat = ({ selectedContact }) => {
-  const [input, setInput] = useState(""); // For input field value only
+  const [input, setInput] = useState(""); 
 
   if (!selectedContact) {
-    // Show the welcome screen if no contact is selected
+    
     return (
       <div className="flex-1 flex items-center justify-center bg-black text-white relative">
         <div className="text-center relative z-10">
@@ -22,7 +22,7 @@ const MainChat = ({ selectedContact }) => {
 
   return (
     <div className="flex flex-col flex-1 bg-black">
-      {/* Chat Header */}
+      {/* Chat  */}
       <div className="bg-black text-white p-4 border-b border-gray-700">
         <h2 className="text-lg font-bold text-cyan-400">{selectedContact}</h2>
       </div>
@@ -45,7 +45,7 @@ const MainChat = ({ selectedContact }) => {
         />
         {/* <button
           className="ml-4 px-4 py-2 bg-cyan-500 text-black rounded-lg hover:bg-cyan-600"
-          onClick={() => alert("empty")} // Placeholder action
+          onClick={() => alert("empty")} 
         >
           Send
         </button> */}

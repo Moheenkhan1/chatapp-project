@@ -1,34 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaCog } from "react-icons/fa"; // Importing settings icon from react-icons
-import StarBorder from '../components/StarBorderButton'; // Import the StarBorder button component
+import { FaCog } from "react-icons/fa"; 
+import StarBorder from '../components/StarBorderButton'; 
 
 const Sidebar = ({ setSelectedContact }) => {
-  const [search, setSearch] = useState(""); // State for the search bar
-  const [settingsOpen, setSettingsOpen] = useState(false); // State to manage settings sidebar visibility
-  const contacts = ["ABHI", "MOHIN", "LALALA", "HUHUHUH"]; // Example contacts
+  const [search, setSearch] = useState(""); 
+  const [settingsOpen, setSettingsOpen] = useState(false); 
+  const contacts = ["ABHI", "MOHIN", "LALALA", "HUHUHUH"]; 
   const username = "User123"; // Example username
 
-  // Ref for the settings sidebar to detect clicks outside of it
+ 
   const settingsRef = useRef(null);
 
-  // Filter contacts based on search query
+
   const filteredContacts = contacts.filter((contact) =>
     contact.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Close the settings sidebar when clicking outside of it
+  
   useEffect(() => {
-    // Function to handle click events outside the settings sidebar
+    
     const handleClickOutside = (event) => {
       if (settingsRef.current && !settingsRef.current.contains(event.target)) {
         setSettingsOpen(false);
       }
     };
 
-    // Add event listener to document
+    
     document.addEventListener("mousedown", handleClickOutside);
 
-    // Cleanup the event listener on component unmount
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -60,7 +60,7 @@ const Sidebar = ({ setSelectedContact }) => {
         ))}
       </ul>
 
-      {/* Settings Icon fixed to the bottom-left */}
+      {/* Setting button */}
       <div
         className="absolute bottom-5 left-5 text-cyan-400 cursor-pointer"
         onClick={() => setSettingsOpen(!settingsOpen)}
@@ -68,9 +68,9 @@ const Sidebar = ({ setSelectedContact }) => {
         <FaCog size={30} />
       </div>
 
-      {/* Settings Sidebar covering full width with modern style */}
+      {/* Settings  */}
       <div
-        ref={settingsRef} // Attach the ref to the settings sidebar
+        ref={settingsRef} 
         className={`absolute bottom-0 left-0 w-full p-6 shadow-2xl rounded-tl-lg transition-all duration-700 ease-out transform ${
           settingsOpen
             ? "translate-y-0 bg-gray-800 opacity-100"
