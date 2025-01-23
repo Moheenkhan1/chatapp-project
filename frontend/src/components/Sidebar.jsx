@@ -1,38 +1,47 @@
-import React, { useState, useEffect, useRef } from "react";
-import { FaCog } from "react-icons/fa"; 
-import StarBorder from '../components/StarBorderButton'; 
+import React, { useState } from "react";
+import { FaCog } from "react-icons/fa";
+import StarBorder from '../components/StarBorderButton';
 
 const Sidebar = ({ setSelectedContact }) => {
   const [search, setSearch] = useState(""); 
   const [settingsOpen, setSettingsOpen] = useState(false); 
-  const contacts = ["ABHI", "MOHIN", "LALALA", "HUHUHUH"]; 
-  const username = "User123"; // Example username
 
- 
-  const settingsRef = useRef(null);
+  const contacts = ["ABHI", "MOHIN", "LALALA", "HUHUHUH"]; 
+  const username = "User123"; 
 
 
   const filteredContacts = contacts.filter((contact) =>
     contact.toLowerCase().includes(search.toLowerCase())
   );
 
-  
-  useEffect(() => {
-    
-    const handleClickOutside = (event) => {
-      if (settingsRef.current && !settingsRef.current.contains(event.target)) {
-        setSettingsOpen(false);
-      }
-    };
 
-    
+  const toggleSettings = () => {
+    setSettingsOpen((prev) => !prev);
+  };
+
+
+  const handleClickOutside = (event) => {
+
+    if (settingsOpen && !event.target.closest('.settings-sidebar') && !event.target.closest('.fa-cog')) {
+      setSettingsOpen(false);
+    }
+  };
+
+ 
+  const addGlobalClickListener = () => {
     document.addEventListener("mousedown", handleClickOutside);
+  };
+
+  const removeGlobalClickListener = () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
 
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  if (settingsOpen) {
+    addGlobalClickListener();
+  } else {
+    removeGlobalClickListener();
+  }
 
   return (
     <div className="relative w-1/4 bg-black p-5 shadow-md text-white">
@@ -60,18 +69,17 @@ const Sidebar = ({ setSelectedContact }) => {
         ))}
       </ul>
 
-      {/* Setting button */}
+      {/* Settings Icon */}
       <div
-        className="absolute bottom-5 left-5 text-cyan-400 cursor-pointer"
-        onClick={() => setSettingsOpen(!settingsOpen)}
+        className="absolute bottom-5 left-5 text-cyan-400 cursor-pointer fa-cog"
+        onClick={toggleSettings} // Toggle settings on click
       >
         <FaCog size={30} />
       </div>
 
-      {/* Settings  */}
+      {/* Settings Sidebar */}
       <div
-        ref={settingsRef} 
-        className={`absolute bottom-0 left-0 w-full p-6 shadow-2xl rounded-tl-lg transition-all duration-700 ease-out transform ${
+        className={`absolute bottom-0 left-0 w-full p-6 shadow-2xl rounded-tl-lg transition-all duration-700 ease-out transform settings-sidebar ${
           settingsOpen
             ? "translate-y-0 bg-gray-800 opacity-100"
             : "translate-y-full bg-transparent opacity-0"
@@ -85,7 +93,7 @@ const Sidebar = ({ setSelectedContact }) => {
               className="w-full mb-4"
               color="cyan"
               speed="5s"
-              //onClick=()
+              // onClick for change password
             >
               Change Password
             </StarBorder>
@@ -94,7 +102,7 @@ const Sidebar = ({ setSelectedContact }) => {
               className="w-full"
               color="red"
               speed="5s"
-              //onClick=() 
+              // onClick for logout
             >
               Logout
             </StarBorder>
