@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState , useContext } from 'react';
 import Squares from '../components/SquaresBG';
 import StarBorder from '../components/StarBorderButton';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -10,6 +12,8 @@ function Register() {
     confirmPassword: ''
   });
 
+  const navigate = useNavigate()
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -17,9 +21,25 @@ function Register() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    
+
+    const response = await axios.post('http://localhost:5000/user/register', formData , { withCredentials: true })
+
+    if(response.status === 200){
+      navigate('/login')
+    }
+
+    if(response.status === 400 || response.status === 401 || response.status === 500){
+      alert(response.data.message)
+    }
+
   };
 
   return (

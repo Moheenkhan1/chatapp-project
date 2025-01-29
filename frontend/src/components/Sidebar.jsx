@@ -1,13 +1,28 @@
-import React, { useState } from "react";
+import React, { useState , useEffect, useContext } from "react";
 import { FaCog } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import StarBorder from '../components/StarBorderButton';
 
 const Sidebar = ({ setSelectedContact }) => {
   const [search, setSearch] = useState(""); 
-  const [settingsOpen, setSettingsOpen] = useState(false); 
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [contacts, setContacts] = useState([])
 
-  const contacts = ["ABHI", "MOHIN", "LALALA", "HUHUHUH"]; 
-  const username = "User123"; 
+  const navigate = useNavigate();
+
+  const fetchContacts = async () => {
+    const response = await axios.post('http://localhost:5000/home/contacts', {}, { withCredentials: true })
+    const allContacts = response.data.contacts
+      
+    const contacts = allContacts.map((contact) => {
+      return contact.username
+    })
+    setContacts(contacts)
+
+    return contacts
+  }
+  fetchContacts()
 
 
   const filteredContacts = contacts.filter((contact) =>
@@ -42,6 +57,19 @@ const Sidebar = ({ setSelectedContact }) => {
   } else {
     removeGlobalClickListener();
   }
+
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/user/logout', {}, { withCredentials: true });
+      
+      if(response.status === 200){
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('Logout failed:', error.message);
+    }
+  };
 
   return (
     <div className="relative w-1/4 bg-black p-5 shadow-md text-white">
@@ -102,7 +130,7 @@ const Sidebar = ({ setSelectedContact }) => {
               className="w-full"
               color="red"
               speed="5s"
-              // onClick for logout
+              onClick={handleLogout}
             >
               Logout
             </StarBorder>

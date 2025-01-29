@@ -2,13 +2,13 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
+const User = require('../models/user.js');
 const authMiddleware = require('../middleware/authMiddleware.js'); 
 
 const router = express.Router();
 
 // Signup Route
-router.post('/signup', async (req, res) => {
+router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
@@ -31,7 +31,7 @@ router.post('/signup', async (req, res) => {
 
     await newUser.save();
 
-    res.status(201).json({ message: "User successfully registered", userId: newUser._id, username: newUser.username });
+    res.status(200).json({ message: "User successfully registered", newUser });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });
@@ -64,15 +64,28 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    res.status(200).json({ token, userId: user._id });
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: false, 
+      maxAge: 3600000, 
+      sameSite: 'lax', 
+    });
+
+    res.status(200).json({ token, user });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });
   }
 });
 
+//logout route
+router.post('/logout', async (req, res) => {
+  res.clearCookie('token');
+  res.status(200).json({ message: 'Logged out successfully' });
+});
+
 // Profile Route 
-router.get('/profile', authMiddleware, async (req, res) => {
+router.post('/home', authMiddleware, async (req, res) => {
   try {
     res.status(200).json({ message: 'You have access to your profile', user: req.user });
   } catch (err) {

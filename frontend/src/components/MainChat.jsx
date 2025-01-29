@@ -1,8 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { io } from "socket.io-client";
 import StarBorder from '../components/StarBorderButton';
 
+
+const socket = io('http://localhost:5000' , { withCredentials: true } );
+
 const MainChat = ({ selectedContact }) => {
-  const [input, setInput] = useState(""); 
+  const [messages, setMessages] = useState('');
+  const [chat, setChat] = useState([]);
+
+  const sendChat = (e) => {
+    e.preventDefault();
+    socket.emit('chat', { messages });
+    setMessages('');
+  };
+
+  useEffect(() => {
+    const handleChat = (payload) => {
+      console.log('Received payload:', payload);
+      setChat((prevChat) => [...prevChat, payload]);
+    };
+  
+    // Attach the listener
+    socket.on('chat', handleChat);
+    
+    return () => {
+      socket.off('chat', handleChat);
+    };
+  }, []);
+  
+
 
   if (!selectedContact) {
     
@@ -34,21 +61,22 @@ const MainChat = ({ selectedContact }) => {
         </p>
       </div>
 
+      {chat.map((payload, index) => (
+        <div key={index}>
+          <p>{payload.messages}</p>
+        </div>
+      ))}
+
       {/* Input and Send Button */}
       <div className="flex items-center p-4 bg-black border-t border-gray-700">
+        <form className=" inline-flex w-full " onSubmit={sendChat} >
         <input
           type="text"
           placeholder={`Message ${selectedContact}...`}
-          value={input}
-          onChange={(e) => setInput(e.target.value)} // Updates input value only
+          value={messages}
+          onChange={(e) => setMessages(e.target.value)} // Updates input value only
           className="flex-1 p-2 border border-gray-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-400 bg-black text-white placeholder-cyan-400"
         />
-        {/* <button
-          className="ml-4 px-4 py-2 bg-cyan-500 text-black rounded-lg hover:bg-cyan-600"
-          onClick={() => alert("empty")} 
-        >
-          Send
-        </button> */}
 
         <StarBorder
             as="button"
@@ -59,6 +87,7 @@ const MainChat = ({ selectedContact }) => {
           >
             Send
           </StarBorder>
+          </form>
       </div>
     </div>
   );
