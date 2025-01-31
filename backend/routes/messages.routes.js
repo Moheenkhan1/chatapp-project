@@ -4,13 +4,12 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user.js');
 const authMiddleware = require('../middleware/authMiddleware.js'); 
 const Message = require('../models/messages.model.js');
+const { getMessages, addMessage } = require('../controllers/message.controller.js');
 
 const router = express.Router();
 
-router.post('/contacts', authMiddleware, async (req, res) => {
-  const contacts = await User.find({})
-  res.status(200).json({contacts})
-});
-
+router.post('/getMessages', authMiddleware, getMessages)
+router.post('/addMessages', authMiddleware, addMessage)
 
 module.exports = router;
+

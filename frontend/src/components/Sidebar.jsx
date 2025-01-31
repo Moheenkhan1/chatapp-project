@@ -3,28 +3,35 @@ import { FaCog } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import StarBorder from '../components/StarBorderButton';
+import { UserDataContext } from '../Contexts/UserContext';
 
-const Sidebar = ({ setSelectedContact }) => {
+const Sidebar = ({ setSelectedContact , currentUser }) => {
   const [search, setSearch] = useState(""); 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [contacts, setContacts] = useState([])
+  
+  const username = currentUser.username;
+  const [to, setTo] = useState('');
 
   const navigate = useNavigate();
 
-  const fetchContacts = async () => {
-    const response = await axios.post('http://localhost:5000/home/contacts', {}, { withCredentials: true })
-    const allContacts = response.data.contacts
-      
-    const contacts = allContacts.map((contact) => {
-      return contact.username
-    })
-    setContacts(contacts)
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const response = await axios.post('http://localhost:5000/home/contacts', {}, { withCredentials: true })
+        const allContacts = response.data.contacts
+        
+        const contactsList = allContacts.map((contact) => {
+          return contact.username
+        })
+        setContacts(contactsList)
+      } catch (error) {
+        console.error('Failed to fetch contacts:', error);
+      }
+    }
 
-    return contacts
-  }
-  fetchContacts()
-
-
+    fetchContacts();
+  }, []); 
   const filteredContacts = contacts.filter((contact) =>
     contact.toLowerCase().includes(search.toLowerCase())
   );
@@ -71,6 +78,12 @@ const Sidebar = ({ setSelectedContact }) => {
     }
   };
 
+
+  const handleSelectedContact = (contact) => {
+    setTo(contact);
+    setSelectedContact(contact);
+  }
+
   return (
     <div className="relative w-1/4 bg-black p-5 shadow-md text-white">
       <h2 className="text-lg text-cyan-400 font-bold mb-4">Chats</h2>
@@ -90,7 +103,7 @@ const Sidebar = ({ setSelectedContact }) => {
           <li
             key={index}
             className="mb-2 p-3 bg-black rounded-lg cursor-pointer hover:bg-gray-900 hover:text-cyan-400"
-            onClick={() => setSelectedContact(contact)} // Set the selected contact
+            onClick={() => handleSelectedContact(contact)} // Set the selected contact
           >
             {contact}
           </li>

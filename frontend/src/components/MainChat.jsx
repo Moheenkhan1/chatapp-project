@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import StarBorder from '../components/StarBorderButton';
+import axios from 'axios';
+import { UserDataContext } from '../Contexts/UserContext';
+import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 const socket = io('http://localhost:5000' , { withCredentials: true } );
 
-const MainChat = ({ selectedContact }) => {
+const MainChat = ({ selectedContact , currentUser }) => {
   const [messages, setMessages] = useState('');
   const [chat, setChat] = useState([]);
+  const to = selectedContact;
 
-  const sendChat = (e) => {
+
+  const sendChat = async (e) => {
     e.preventDefault();
+    await axios.post('http://localhost:5000/messages/addMessages',{currentUser,to,chat}, { withCredentials: true })
     socket.emit('chat', { messages });
-    setMessages('');
+    setMessages(''); 
+    console.log(messages)
   };
 
   useEffect(() => {

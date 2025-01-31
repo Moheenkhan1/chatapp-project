@@ -3,9 +3,11 @@ import Squares from '../components/SquaresBG';
 import StarBorder from '../components/StarBorderButton';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { UserDataContext } from '../Contexts/UserContext';
 
 function Login() {
   const navigate = useNavigate();
+  const { setUser } = useContext(UserDataContext);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -28,6 +30,8 @@ function Login() {
       );
 
       if (response.status === 200) {
+        console.log(response.data.user)
+        setUser(response.data.user);
         navigate('/');
       }
     } catch (error) {
