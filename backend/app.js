@@ -1,74 +1,66 @@
-const { createServer } = require("http");const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const userRoutes = require('./routes/user.routes');
-const homeRoutes = require('./routes/home.routes');
-const messagesRoutes = require('./routes/messages.routes');
-const { Server } = require('socket.io');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
+const { createServer } = require("http");
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const userRoutes = require("./routes/user.routes");
+const homeRoutes = require("./routes/home.routes");
+const messagesRoutes = require("./routes/messages.routes");
+const socket = require("socket.io");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const Message = require("./models/messages.model");
+const authMiddleware = require("./middleware/authMiddleware");
+const jwt = require("jsonwebtoken");
+const connectTodb = require("./config/db");
 
 dotenv.config();  
-
 const app = express();
 
-const server = createServer(app);
-const io = new Server(server,{
+// Middleware and configurations
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:5173", // Adjust this to your front-end URL
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+}));
+
+// MongoDB connection
+
+connectTodb();
+
+// Routes
+app.use("/user", userRoutes);
+app.use("/home", authMiddleware, homeRoutes);
+app.use("/messages", authMiddleware, messagesRoutes);
+
+// Start the server
+const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+const io = socket(server, {
   cors: {
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST'],
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
-// socket connection
+global.onlineUsers = new Map();
 
-io.on('connection', (socket) => {
-  
-  console.log('what is socket', socket);
-  console.log('Connected to socket');
+io.on("connection",(socket)=>{
+  global.chatSocket = socket;
+  socket.on("add-user",(userId)=>{
+    onlineUsers.set(userId,socket.id);
+  })
 
-  socket.on('chat', (payload) => {
-    console.log('what is payload', payload);
-    io.emit('chat', payload);
-  });
-
-});
-
-
-app.use(express.json());
-app.use(cookieParser());
-app.options('*', cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
-}));
-
-
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true, 
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-}));
-
-
-
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.log(err));
-
-
-app.use('/user', userRoutes);
-app.use('/home', homeRoutes);
-app.use('/messages', messagesRoutes);
-
-
-app.get('/protected', (req, res) => {
-  res.status(200).json({ message: 'This is a protected route' });
-});
-
-
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  socket.on("send-msg",(data)=>{
+    const sendUserSocket = onlineUsers.get(data.to);
+    if(sendUserSocket){
+      socket.to(sendUserSocket).emit("msg-receive",data.msg);
+    }
+  })
+})

@@ -1,36 +1,48 @@
-const messageModel = require('../models/messages.model')
 const mongoose = require('mongoose');
+const Message = require('../models/messages.model');
 
-module.exports.getMessages = async (req,res,next) => {
-}
+module.exports.getMessages = async (req, res) => {
+  const { sender, receiver } = req.params;
 
-module.exports.addMessage = async (req, res, next) => {
-    try {
-        const { currentUser, to, chat } = req.body;
+  // Check if sender and receiver are valid ObjectIds
+  if (!mongoose.Types.ObjectId.isValid(sender) || !mongoose.Types.ObjectId.isValid(receiver)) {
+    return res.status(400).send("Invalid sender or receiver ID");
+  }
 
-        const from = currentUser._id;
-        const message = chat;
+  try {
+    const messages = await Message.find({
+      $or: [
+        { sender, receiver },
+        { sender: receiver, receiver: sender }
+      ]
+    }).sort({ createdAt: 1 });
 
-        console.log(currentUser,to,message)
- 
-        // Validate sender (from) as ObjectId
-        if (!mongoose.Types.ObjectId.isValid(from) || !mongoose.Types.ObjectId.isValid(to)) {
-            return res.status(400).json({ message: "Invalid sender or recipient ID" });
-        }
-
-        // Ensure message text is present
-        if (!message || typeof message !== 'string' || message.trim() === '') {
-            return res.status(400).json({ message: "Message text is required" });
-        }
-
-        const data = await messageModel.create({
-            message: { text: message },
-            users: [from, to],
-            sender: new mongoose.Types.ObjectId(from), // Convert to ObjectId
-        });
-
-        res.status(200).json({ message: "Message added successfully" });
-    } catch (error) {
-        next(error);
-    }
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).send('Error fetching messages');
+  }
 };
+
+// Add a new message
+module.exports.addMessage = async (req, res) => {
+    const { from, to, message } = req.body;
+  
+    if (!from || !to || !message) {
+      return res.status(400).send('Sender, receiver, and message are required');
+    }
+  
+    try {
+      const newMessage = await Message.create({
+        message: { text: message },
+        users: [from, to],
+        sender: from,
+        receiver: to,
+      });
+  
+      res.status(200).json(newMessage);
+    } catch (error) {
+      console.error("Error saving message:", error);
+      res.status(500).send("Error saving message");
+    }
+  };
+  

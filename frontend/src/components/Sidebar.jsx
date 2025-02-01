@@ -5,37 +5,36 @@ import axios from 'axios';
 import StarBorder from '../components/StarBorderButton';
 import { UserDataContext } from '../Contexts/UserContext';
 
-const Sidebar = ({ setSelectedContact , currentUser }) => {
+const Sidebar = ({ setSelectedContact , currentUser , setCurrentUser }) => {
   const [search, setSearch] = useState(""); 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [contacts, setContacts] = useState([])
   
-  const username = currentUser.username;
+  // const username = currentUser.username;
   const [to, setTo] = useState('');
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchContacts = async () => {
-      try {
-        const response = await axios.post('http://localhost:5000/home/contacts', {}, { withCredentials: true })
-        const allContacts = response.data.contacts
-        
-        const contactsList = allContacts.map((contact) => {
-          return contact.username
-        })
-        setContacts(contactsList)
-      } catch (error) {
-        console.error('Failed to fetch contacts:', error);
+      if (currentUser) {
+        try {
+          const response = await axios.get('http://localhost:5000/home/contacts', { withCredentials: true });
+          setContacts(response.data.contacts);
+        } catch (error) {
+          console.error("Error fetching contacts:", error.response?.data || error.message);
+        }
       }
-    }
-
+    };
     fetchContacts();
-  }, []); 
-  const filteredContacts = contacts.filter((contact) =>
-    contact.toLowerCase().includes(search.toLowerCase())
+  }, [currentUser]);
+  
+
+  const filteredContacts = contacts.filter(contact => 
+    contact.username.toLowerCase().includes(search.toLowerCase())
   );
 
+  console.log("filteredContacts", filteredContacts)
 
   const toggleSettings = () => {
     setSettingsOpen((prev) => !prev);
@@ -69,8 +68,12 @@ const Sidebar = ({ setSelectedContact , currentUser }) => {
   const handleLogout = async () => {
     try {
       const response = await axios.post('http://localhost:5000/user/logout', {}, { withCredentials: true });
+      console.log("response", response)
+
       
       if(response.status === 200){
+        localStorage.removeItem('user');
+        setCurrentUser(null);
         navigate('/login');
       }
     } catch (error) {
@@ -79,10 +82,10 @@ const Sidebar = ({ setSelectedContact , currentUser }) => {
   };
 
 
-  const handleSelectedContact = (contact) => {
-    setTo(contact);
-    setSelectedContact(contact);
-  }
+  const handleContactClick = (contact) => {
+    console.log("Selected contact:", contact);  // Log the selected contact for debugging
+    setSelectedContact(contact); // Set the selected contact
+  };
 
   return (
     <div className="relative w-1/4 bg-black p-5 shadow-md text-white">
@@ -99,13 +102,13 @@ const Sidebar = ({ setSelectedContact , currentUser }) => {
 
       {/* Contacts List */}
       <ul>
-        {filteredContacts.map((contact, index) => (
+        {filteredContacts.map((contact) => (
           <li
-            key={index}
+            key={contact._id}
             className="mb-2 p-3 bg-black rounded-lg cursor-pointer hover:bg-gray-900 hover:text-cyan-400"
-            onClick={() => handleSelectedContact(contact)} // Set the selected contact
+            onClick={() => handleContactClick(contact)} // Set the selected contact
           >
-            {contact}
+            {contact.username}
           </li>
         ))}
       </ul>
@@ -128,7 +131,7 @@ const Sidebar = ({ setSelectedContact , currentUser }) => {
       >
         {settingsOpen && (
           <>
-            <h3 className="text-lg text-cyan-400 font-bold mb-4">{username}</h3>
+            <h3 className="text-lg text-cyan-400 font-bold mb-4">{currentUser.username}</h3>
             <StarBorder
               as="button"
               className="w-full mb-4"

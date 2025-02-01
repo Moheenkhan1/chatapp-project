@@ -24,19 +24,19 @@ function Login() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        'http://localhost:5000/user/login',
+        "http://localhost:5000/user/login",
         formData,
-        { withCredentials: true } 
+        { withCredentials: true }
       );
-
       if (response.status === 200) {
-        console.log(response.data.user)
-        setUser(response.data.user);
-        navigate('/');
+        console.log("User authenticated:", response.data.user);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        // setUser(response.data.user);
+        navigate("/");
       }
     } catch (error) {
-      console.error('Login failed:', error.response?.data?.message || error.message);
-      alert(error.response?.data?.message || 'An error occurred');
+      console.error("Login failed:", error.response?.data?.message || error.message);
+      alert(error.response?.data?.message || "An error occurred");
     }
   };
 

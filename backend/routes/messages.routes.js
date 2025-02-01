@@ -1,15 +1,13 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user.js');
-const authMiddleware = require('../middleware/authMiddleware.js'); 
-const Message = require('../models/messages.model.js');
-const { getMessages, addMessage } = require('../controllers/message.controller.js');
+const express = require("express");
+const { getMessages, addMessage } = require("../controllers/message.controller");
+const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post('/getMessages', authMiddleware, getMessages)
-router.post('/addMessages', authMiddleware, addMessage)
+// Route for fetching messages between the sender and receiver
+router.get("/getMessages/:sender/:receiver", authMiddleware, getMessages);
+
+// Route for adding a new message
+router.post("/addMessages", authMiddleware, addMessage);
 
 module.exports = router;
-
