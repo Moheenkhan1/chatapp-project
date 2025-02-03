@@ -33,6 +33,9 @@ connectTodb();
 
 // Serve uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/profilePic", express.static(path.join(__dirname, "profilePic")));
+
+
 
 // Routes
 app.use("/user", userRoutes);

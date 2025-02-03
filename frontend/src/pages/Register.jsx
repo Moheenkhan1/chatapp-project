@@ -4,12 +4,16 @@ import StarBorder from '../components/StarBorderButton';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
+
+
 function Register() {
+  const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
 
   const navigate = useNavigate()
@@ -30,7 +34,7 @@ function Register() {
     }
     
 
-    const response = await axios.post('http://localhost:5000/user/register', formData , { withCredentials: true })
+    const response = await axios.post('http://localhost:5000/user/register', formData ,file, {  headers: { "Content-Type": "multipart/form-data" }, withCredentials: true })
 
     if(response.status === 200){
       navigate('/login')
@@ -41,6 +45,10 @@ function Register() {
     }
 
   };
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+  }
 
   return (
 
@@ -63,6 +71,11 @@ function Register() {
         </div>
         <form className="mt-8 space-y-6 " onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4 ">
+            <div>
+              <input 
+              type="file"
+              onChange={handleFileChange} />
+            </div>
             <div>
               <label htmlFor="username" className="block ml-[8.1rem] text-sm font-medium text-white">
                 Username

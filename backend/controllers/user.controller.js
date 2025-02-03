@@ -3,11 +3,31 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.js');
 const authMiddleware = require('../middleware/authMiddleware.js')
+const multer = require("multer");
+const path = require("path");
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "profilePic/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const profilePic = multer({ storage: storage });
 
 
 module.exports.registerUser = async (req,res)=>{
     const { username, email, password } = req.body;
-
+    let fileUrl = null;
+    let fileType = null;
+    if (req.file) {
+      fileUrl = `/profilePic/${req.file.filename}`;
+      fileType = req.file.mimetype.split("/")[0];
+    }
+    console.log(req.file)
   if (!username || !email || !password) {
     return res.status(400).json({ message: 'Username, email, and password are required' });
   }
@@ -24,6 +44,9 @@ module.exports.registerUser = async (req,res)=>{
       username,
       email,
       password: hashedPassword,
+      avatar: {
+        fileUrl:fileUrl, fileType:fileType 
+      },
     });
 
     await newUser.save();

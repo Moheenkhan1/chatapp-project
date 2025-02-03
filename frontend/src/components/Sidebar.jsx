@@ -9,6 +9,7 @@ const Sidebar = ({ setSelectedContact , currentUser , setCurrentUser }) => {
   const [search, setSearch] = useState(""); 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [contacts, setContacts] = useState([])
+  const [selectedContactId, setSelectedContactId] = useState(null);
   
   // const username = currentUser.username;
   const [to, setTo] = useState('');
@@ -33,6 +34,7 @@ const Sidebar = ({ setSelectedContact , currentUser , setCurrentUser }) => {
   const filteredContacts = contacts.filter(contact => 
     contact.username.toLowerCase().includes(search.toLowerCase())
   );
+  
 
   console.log("filteredContacts", filteredContacts)
 
@@ -83,8 +85,8 @@ const Sidebar = ({ setSelectedContact , currentUser , setCurrentUser }) => {
 
 
   const handleContactClick = (contact) => {
-    console.log("Selected contact:", contact);  // Log the selected contact for debugging
-    setSelectedContact(contact); // Set the selected contact
+    setSelectedContact(contact);
+    setSelectedContactId(contact._id);
   };
 
   return (
@@ -105,8 +107,10 @@ const Sidebar = ({ setSelectedContact , currentUser , setCurrentUser }) => {
         {filteredContacts.map((contact) => (
           <li
             key={contact._id}
-            className="mb-2 p-3 bg-black rounded-lg cursor-pointer hover:bg-gray-900 hover:text-cyan-400"
-            onClick={() => handleContactClick(contact)} // Set the selected contact
+            className={`mb-2 p-3 rounded-lg cursor-pointer transition-colors duration-300 ${
+              selectedContactId === contact._id ? "bg-cyan-500 text-white" : "bg-black hover:bg-gray-900 hover:text-cyan-400"
+            }`}
+            onClick={() => handleContactClick(contact)}
           >
             {contact.username}
           </li>
