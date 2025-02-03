@@ -9,32 +9,30 @@ import axios from 'axios';
 
 function Register() {
   const [file, setFile] = useState(null);
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
+  const [username , setUsername] = useState("")
+  const [email,setEmail] = useState("")
+  const [ password , setPassword] = useState("")
+  const [confirmPassword , setconfirmPassword] = useState('')
+  
 
   const navigate = useNavigate()
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
+    if (password !== confirmPassword) {
       alert("Passwords do not match");
       return;
     }
+
+    const formData = new FormData();
+    formData.append("username", username);
+    formData.append("email", email);
+    formData.append("password", password);
+    if (file) formData.append("file", file);
     
 
-    const response = await axios.post('http://localhost:5000/user/register', formData ,file, {  headers: { "Content-Type": "multipart/form-data" }, withCredentials: true })
+    const response = await axios.post('http://localhost:5000/user/register', formData, {  headers: { "Content-Type": "multipart/form-data" }, withCredentials: true })
 
     if(response.status === 200){
       navigate('/login')
@@ -87,8 +85,10 @@ function Register() {
                 required
                 className="appearance-none ml-[8.1rem] rounded-md relative block w-[60%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Username"
-                value={formData.username}
-                onChange={handleChange}
+                value={username}
+                onChange={ (e)=>{
+                  setUsername(e.target.value)
+                } }
               />
             </div>
             <div>
@@ -102,8 +102,10 @@ function Register() {
                 required
                 className="appearance-none rounded-md ml-[8.1rem] relative block w-[60%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Email address"
-                value={formData.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e)=>{
+                  setEmail(e.target.value)
+                }}
               />
             </div>
             <div>
@@ -117,8 +119,10 @@ function Register() {
                 required
                 className="appearance-none rounded-md ml-[8.1rem] relative block w-[60%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
+                value={password}
+                onChange={(e)=>{
+                  setPassword(e.target.value)
+                }}
               />
             </div>
             <div>
@@ -132,8 +136,10 @@ function Register() {
                 required
                 className="appearance-none rounded-md ml-[8.1rem] relative block w-[60%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Confirm password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
+                value={confirmPassword}
+                onChange={(e)=>{
+                  setconfirmPassword(e.target.value)
+                }}
               />
             </div>
           </div>
