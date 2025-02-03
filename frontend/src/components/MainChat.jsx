@@ -3,9 +3,6 @@ import { io } from "socket.io-client";
 import axios from "axios";
 import StarBorder from "../components/StarBorderButton";
 
-// Initialize socket connection to your backend server
-// const socket = io("http://localhost:5000", { withCredentials: true });
-
 const MainChat = ({ selectedContact, currentUser , socket }) => {
 
   const scrollRef = useRef();
@@ -13,6 +10,7 @@ const MainChat = ({ selectedContact, currentUser , socket }) => {
   const [messages, setMessages] = useState("");
   const [chat, setChat] = useState([]);
   const [incomingMsg, setIncomingMsg] = useState("");
+  const [file, setFile] = useState(null);
 
   // Fetch messages for the current chat (sender and receiver)
   useEffect(() => {
@@ -41,32 +39,33 @@ const MainChat = ({ selectedContact, currentUser , socket }) => {
 
   const sendChat = async (e) => {
     e.preventDefault();
-    if (!messages.trim()) return;
+    if (!messages.trim() && !file) return;
 
-    if (!selectedContact || !selectedContact._id) {
-      console.error("Receiver is not selected.");
-      return; // Prevent sending if selectedContact is not set
-    }
-
-    const newMessage = {
-      from: currentUser._id,
-      to: selectedContact._id,
-      message: messages,
-    };
-
-    console.log("Sending message:", newMessage); // Log to debug the values
+    const formData = new FormData();
+    formData.append("from", currentUser._id);
+    formData.append("to", selectedContact._id);
+    formData.append("message", messages);
+    if (file) formData.append("file", file);
 
     try {
-      // Emit the message to the server via socket
-      socket.current.emit("send-msg", newMessage);
+      socket.current.emit("send-msg", { from: currentUser._id, to: selectedContact._id, message: messages, file });
 
-      // Save the message to the backend
-      await axios.post("http://localhost:5000/messages/addMessages", newMessage, { withCredentials: true });
-      setMessages(""); // Clear the input field
+      const response = await axios.post(
+        "http://localhost:5000/messages/addMessages",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        }
+      );
+      setMessages("");
+      setFile(null);
+      setChat((prevChat) => [...prevChat, response.data]);
     } catch (error) {
       console.error("Error sending message:", error.response?.data || error.message);
     }
   };
+
 
   useEffect(()=>{
     if(socket.current){
@@ -93,20 +92,33 @@ const MainChat = ({ selectedContact, currentUser , socket }) => {
     );
   }
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+  
+
   return (
     <div className="flex flex-col flex-1 bg-black">
       <div className="bg-black text-white p-4 border-b border-gray-700">
         <h2 className="text-lg font-bold text-cyan-400">{selectedContact.username}</h2>
       </div>
       <div className="flex-1 p-4 overflow-y-auto bg-cyan text-white">
-        {chat.map((msg, index) => (
+      {chat.map((msg, index) => (
           <div key={index} className={msg.sender === currentUser._id ? "text-right" : "text-left"}>
-            <p className="p-2 bg-gray-800 inline-block rounded-lg">{msg.message.text}</p>
+            <p>{msg.message.text}</p>
+            {msg.message.fileUrl && (
+              <div className={msg.sender === currentUser._id ? "flex justify-end" : "flex justify-start"}>
+                {msg.message.fileType === "image" && <img className="max-w-xs rounded-lg mt-2" src={`http://localhost:5000${msg.message.fileUrl}`} alt="Shared" />}
+                {msg.message.fileType === "video" && <video controls className="max-w-xs" src={`http://localhost:5000${msg.message.fileUrl}`} />}
+                {msg.message.fileType === "audio" && <audio controls className="max-w-xs" src={`http://localhost:5000${msg.message.fileUrl}`} />}
+              </div>
+            )}
           </div>
         ))}
       </div>
       <div className="flex items-center p-4 bg-black border-t border-gray-700">
         <form className="inline-flex w-full" onSubmit={sendChat}>
+        <input type="file" onChange={handleFileChange} />
           <input
             type="text"
             placeholder={`Message ${selectedContact.username}...`}

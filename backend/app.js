@@ -12,6 +12,7 @@ const Message = require("./models/messages.model");
 const authMiddleware = require("./middleware/authMiddleware");
 const jwt = require("jsonwebtoken");
 const connectTodb = require("./config/db");
+const path = require("path");
 
 dotenv.config();  
 const app = express();
@@ -29,6 +30,9 @@ app.use(cors({
 // MongoDB connection
 
 connectTodb();
+
+// Serve uploaded files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
 app.use("/user", userRoutes);
