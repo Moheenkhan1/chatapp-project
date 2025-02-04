@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import axios from "axios";
-import { FiPaperclip } from "react-icons/fi"; // Import the Paperclip icon
+import { FiPaperclip, FiPhone } from "react-icons/fi"; // Import Paperclip and Phone icons
 import StarBorder from "../components/StarBorderButton";
 
 const MainChat = ({ selectedContact, currentUser, socket }) => {
@@ -18,7 +18,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
     const fetchMessages = async () => {
       if (!selectedContact || !selectedContact._id || !currentUser || !currentUser._id) {
         console.log("Receiver or sender is not set properly.");
-        return; // Early return if either selectedContact or currentUser is not set
+        return;
       }
 
       try {
@@ -26,14 +26,14 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
           `http://localhost:5000/messages/getMessages/${currentUser._id}/${selectedContact._id}`,
           { withCredentials: true }
         );
-        setChat(response.data); // Populate chat with fetched messages
+        setChat(response.data);
       } catch (error) {
         console.error("Error fetching messages:", error.response?.data || error.message);
       }
     };
 
     fetchMessages();
-  }, [currentUser, selectedContact, chat]); // Only re-run when these change
+  }, [currentUser, selectedContact, chat]);
 
   const sendChat = async (e) => {
     e.preventDefault();
@@ -58,7 +58,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
       );
       setMessages("");
       setFile(null);
-      setFilePreview(null); // Reset file preview after sending
+      setFilePreview(null);
       setChat((prevChat) => [...prevChat, response.data]);
     } catch (error) {
       console.error("Error sending message:", error.response?.data || error.message);
@@ -81,19 +81,10 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
 
-  // If selectedContact or currentUser is not set, show a loading or error message
-  if (!selectedContact || !selectedContact._id || !currentUser || !currentUser._id) {
-    return (
-      <div className="flex flex-col flex-1 bg-black text-white items-center justify-center">
-        <h2 className="text-xl font-bold text-cyan-400 text-center">PLEASE SELECT A CONTACT TO START CHATTING</h2>
-      </div>
-    );
-  }
-
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
-    
+
     if (selectedFile) {
       const fileType = selectedFile.type.split("/")[0];
       const fileUrl = URL.createObjectURL(selectedFile);
@@ -105,22 +96,41 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
       } else if (fileType === "audio") {
         setFilePreview(<audio controls className="max-w-xs" src={fileUrl} />);
       } else {
-        setFilePreview(null); // No preview for unsupported file types
+        setFilePreview(null);
       }
     }
   };
 
-  // Function to remove file preview and reset the file state
   const removeFile = () => {
     setFile(null);
     setFilePreview(null);
   };
 
+  if (!selectedContact || !selectedContact._id || !currentUser || !currentUser._id) {
+    return (
+      <div className="flex flex-col flex-1 bg-black text-white items-center justify-center">
+        <h2 className="text-xl font-bold text-cyan-400 text-center">PLEASE SELECT A CONTACT TO START CHATTING</h2>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col flex-1 bg-black">
-      <div className="bg-black text-white p-4 border-b border-gray-700">
+      {/* Header with username and call icon */}
+      <div className="bg-black text-white p-4 border-b border-gray-700 flex justify-between items-center">
         <h2 className="text-lg font-bold text-cyan-400">{selectedContact.username}</h2>
+        <div className="flex items-center">
+          <button
+            type="button"
+            onClick={() => console.log("Call button clicked")} // Add call functionality here
+            className="text-cyan-400 hover:text-cyan-300 focus:outline-none ml-2"
+          >
+            <FiPhone size={24} />
+          </button>
+        </div>
       </div>
+
+      {/* Chat messages */}
       <div className="flex-1 p-4 overflow-y-auto bg-black text-white">
         {chat.map((msg, index) => (
           <div key={index} className={`flex mb-2 ${msg.sender === currentUser._id ? "justify-end" : "justify-start"}`}>
@@ -155,9 +165,10 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
             )}
           </div>
         ))}
+        <div ref={scrollRef} />
       </div>
 
-      {/* Move the file preview section above the message input */}
+      {/* File preview */}
       {filePreview && (
         <div className="p-4 bg-black border-t border-gray-700">
           <div className="mb-2 w-full text-center">
@@ -167,7 +178,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
               <button
                 type="button"
                 className="text-red-500 ml-2"
-                onClick={removeFile} // Remove file preview on click
+                onClick={removeFile}
               >
                 Remove
               </button>
@@ -176,6 +187,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
         </div>
       )}
 
+      {/* Message input */}
       <div className="flex items-center p-4 bg-black border-t border-gray-700">
         <form className="inline-flex w-full" onSubmit={sendChat}>
           <input
@@ -184,7 +196,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
             className="hidden"
           />
           <label htmlFor="fileInput" className="text-cyan-400 mr-2 cursor-pointer mt-4">
-            <FiPaperclip size={24} /> {/* Icon instead of text */}
+            <FiPaperclip size={24} />
           </label>
           <input
             id="fileInput"
@@ -196,7 +208,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
             type="text"
             placeholder={`Message ${selectedContact.username}...`}
             value={messages}
-            onChange={(e) => setMessages(e.target.value)} // Updates input value only
+            onChange={(e) => setMessages(e.target.value)}
             className="flex-1 p-2 border border-gray-700 rounded-lg outline-none focus:ring-2 focus:ring-blue-400 bg-black text-white placeholder-cyan-400"
           />
           <StarBorder as="button" className="custom-class ml-[2.2rem] w-[10%]" color="cyan" speed="5s">

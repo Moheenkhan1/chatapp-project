@@ -21,7 +21,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: "http://localhost:5174", // Adjust this to your front-end URL
+  origin: "http://localhost:5173", // Adjust this to your front-end URL
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -50,7 +50,7 @@ const server = app.listen(PORT, () => {
 
 const io = socket(server, {
   cors: {
-    origin: "http://localhost:5174",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST"],
     credentials: true,
   },
