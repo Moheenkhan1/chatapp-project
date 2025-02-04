@@ -1,3 +1,4 @@
+const Message = require('../models/messages.model.js');
 const User = require('../models/user.js');
 
 module.exports.getContacts = async (req, res) => {
@@ -8,4 +9,8 @@ module.exports.getContacts = async (req, res) => {
       res.status(500).send("Error fetching contacts");
     }
   };
+
+  module.exports.authHome = async (req,res)=>{
+    res.status(200).json({Message : " Authorization Successful "})
+  }
   

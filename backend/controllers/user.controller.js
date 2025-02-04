@@ -98,8 +98,6 @@ module.exports.loginUser = async (req,res)=>{
 }
 
 module.exports.logoutUser = async (req,res)=>{
-    async (req, res) => {
         res.clearCookie('token');
         res.status(200).json({ message: 'Logged out successfully' });
-    }
 }

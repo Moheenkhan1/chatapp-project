@@ -107,12 +107,13 @@ const Sidebar = ({ setSelectedContact , currentUser , setCurrentUser }) => {
         {filteredContacts.map((contact) => (
           <li
             key={contact._id}
-            className={`mb-2 p-3 rounded-lg cursor-pointer transition-colors duration-300 ${
+            className={`flex mb-2 p-3 rounded-lg cursor-pointer transition-colors duration-300 ${
               selectedContactId === contact._id ? "bg-cyan-500 text-white" : "bg-black hover:bg-gray-900 hover:text-cyan-400"
             }`}
             onClick={() => handleContactClick(contact)}
           >
-            {contact.username}
+          <img className=" w-[4rem] h-[4rem] rounded-full object-cover object-centre " src={ ` http://localhost:5000${ contact.avatar.fileUrl } ` } alt="profile" />
+            <p className=" ml-9 text-xl " > {contact.username}</p>
           </li>
         ))}
       </ul>

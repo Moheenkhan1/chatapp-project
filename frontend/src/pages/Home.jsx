@@ -22,6 +22,18 @@ const Home = () => {
     } else {
       navigate('/login'); // Redirect to login if user is not found
     }
+
+    // const authResponse = async()=>{
+
+    //   const response = await axios.post('http://localhost:5000/home/auth', { withCredentials: true })
+
+    //   if(response.status !== 200){
+    //     navigate('/login')
+    //   }
+
+    // }
+
+
   }, [navigate]);
 
   useEffect(()=>{

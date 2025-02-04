@@ -29,6 +29,6 @@ router.post('/register',profilePic.single("file"),registerUser);
 router.post('/login', loginUser);
 
 //logout route
-  router.post('/logout', logoutUser);
+router.post('/logout', logoutUser);
 
 module.exports = router;
