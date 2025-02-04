@@ -90,7 +90,7 @@ const Sidebar = ({ setSelectedContact , currentUser , setCurrentUser }) => {
   };
 
   return (
-    <div className="relative w-1/4 bg-black p-5 shadow-md text-white">
+    <div className="relative w-1/4 bg-black p-5 shadow-md text-white overflow-auto">
       <h2 className="text-lg text-cyan-400 font-bold mb-4">Chats</h2>
 
       {/* Search Bar */}
