@@ -5,6 +5,8 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import StarBorder from "../components/StarBorderButton";
+import { BsEmojiSmile } from "react-icons/bs";  
+import EmojiPicker from "emoji-picker-react";
 
 const MainChat = ({ selectedContact, currentUser, socket }) => {
   const scrollRef = useRef();
@@ -18,6 +20,8 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
   const [lightboxMedia, setLightboxMedia] = useState([]);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false); 
 
   // Fetch messages
   useEffect(() => {
@@ -142,6 +146,11 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
       </div>
     );
   }
+  //emoji
+  const handleEmojiClick = (emojiObject) => {
+    setMessages((prev) => prev + emojiObject.emoji);
+  };
+  
 
   return (
     <div className="flex flex-col flex-1 bg-black">
@@ -238,6 +247,19 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
             <FiPaperclip size={24} />
             <input type="file" className="hidden" onChange={handleFileChange} />
           </label>
+            {/* Emoji Picker */}
+  <div className="relative">
+    <BsEmojiSmile
+      size={24}
+      className="cursor-pointer text-cyan-400"
+      onClick={() => setShowEmojiPicker((prev) => !prev)}
+    />
+    {showEmojiPicker && (
+      <div className="absolute bottom-10 left-0 z-50">
+        <EmojiPicker onEmojiClick={handleEmojiClick} />
+      </div>
+    )}
+  </div>
 
           {/* Text Input */}
           <input
