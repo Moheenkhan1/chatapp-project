@@ -154,13 +154,20 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
 
   return (
     <div className="flex flex-col flex-1 bg-black">
-      {/* Chat Header */}
-      <div className="bg-black text-white p-4 border-b border-gray-700 flex justify-between items-center">
+        {/* Chat Header with Profile Picture */}
+    <div className="bg-black text-white p-4 border-b border-gray-700 flex justify-between items-center">
+      <div className="flex items-center gap-3">
+        <img
+          className="w-10 h-10 rounded-full object-cover"
+          src={`http://localhost:5000${selectedContact.avatar.fileUrl}`}
+          alt="Profile"
+        />
         <h2 className="text-lg font-bold text-cyan-400">{selectedContact.username}</h2>
-        <button className="text-cyan-400 hover:text-cyan-300">
-          <FiPhone size={24} />
-        </button>
       </div>
+      <button className="text-cyan-400 hover:text-cyan-300">
+        <FiPhone size={24} />
+      </button>
+    </div>
 
       {/* Chat Messages */}
       <div className="flex-1 p-4 overflow-y-auto bg-black text-white">

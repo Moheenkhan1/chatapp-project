@@ -3,6 +3,8 @@ import { FaCog } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import StarBorder from "../components/StarBorderButton";
+import { FaTimes } from 'react-icons/fa';
+
 
 const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser }) => {
   const [search, setSearch] = useState("");
@@ -134,7 +136,15 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser }) => {
           ref={settingsRef} // Attach the ref to this div
           className="absolute bottom-0 left-0 w-full p-6 shadow-2xl rounded-tl-lg transition-transform duration-700 ease-out transform bg-gray-800 opacity-100"
         >
-          <h3 className="text-lg text-cyan-400 font-bold mb-4">{currentUser.username}</h3>
+          {/* <h3 className="text-lg text-cyan-400 font-bold mb-4">{currentUser.username}</h3> */}
+          <div className="flex items-center space-x-4 mb-4">
+  <img
+    className="w-12 h-12 rounded-full object-cover"
+    src={`http://localhost:5000${currentUser.avatar.fileUrl}`}
+    alt="Profile"
+  />
+  <h3 className="text-lg text-cyan-400 font-bold">{currentUser.username}</h3>
+</div>
           <StarBorder as="button" className="w-full mb-4" color="cyan" speed="5s">
             Change Password
           </StarBorder>
@@ -143,8 +153,7 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser }) => {
           </StarBorder>
         </div>
       )}
-
-      {/* Enlarged Profile Photo Modal */}
+      {/* photo view */}
       {isPhotoOpen && selectedPhoto && (
         <div
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50"
@@ -155,7 +164,7 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser }) => {
               className="absolute top-2 right-2 bg-cyan-400 text-white p-2 rounded-full hover:bg-blue-800"
               onClick={() => setIsPhotoOpen(false)}
             >
-              ✖
+              <FaTimes className="text-white" /> {/* Icon here */}
             </button>
             <img
               src={selectedPhoto}
