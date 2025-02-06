@@ -27,7 +27,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); 
 
-// Fetch messages & mark as read
+  // Fetch messages & mark as read
   useEffect(() => {
     const fetchMessages = async () => {
       if (!selectedContact || !currentUser) return;
@@ -41,11 +41,13 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
         setChat(response.data);
 
         // Mark messages as read
-        await axios.post(
-          "http://localhost:5000/api/mark-messages-read",
-          { senderId: selectedContact._id },
-          { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-        );
+  
+          // await axios.post(
+          //   "http://localhost:5000/api/mark-messages-read",
+          //   { senderId: selectedContact._id },
+          //   { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+          // );
+
 
       } catch (error) {
         console.error("Error fetching messages:", error.response?.data || error.message);
@@ -229,6 +231,20 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
     setIsLightboxOpen(true);
   };
 
+  const deleteMessage = async (msgId) => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/messages/deleteMessage/${msgId}/${currentUser._id}`,
+        { withCredentials: true } 
+      );
+      setChat((prev) => prev.filter((msg) => msg._id !== msgId));
+    } catch (error) {
+      console.error("Error deleting message:", error.response?.data || error.message);
+    }
+  };
+  
+  
+
   if (!selectedContact || !currentUser) {
     return (
       <div className="flex flex-col flex-1 bg-black text-white items-center justify-center">
@@ -246,23 +262,23 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
 
   return (
     <div className="flex flex-col flex-1 bg-black">
-        {/* Chat Header with Profile Picture */}
-    <div className="bg-black text-white p-4 border-b border-gray-700 flex justify-between items-center">
-      <div className="flex items-center gap-3">
-        <img
-          className="w-10 h-10 rounded-full object-cover"
-          src={`http://localhost:5000${selectedContact.avatar.fileUrl}`}
-          alt="Profile"
-        />
-        <h2 className="text-lg font-bold text-cyan-400">{selectedContact.username}</h2>
-        <span className={users.some(user => user._id === selectedContact._id && user.isOnline) ? "text-green-500" : "text-red-500"}>
-          {users.some(user => user._id === selectedContact._id && user.isOnline) ? "Online" : "Offline"}
-        </span>
+      {/* Chat Header with Profile Picture */}
+      <div className="bg-black text-white p-4 border-b border-gray-700 flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <img
+            className="w-10 h-10 rounded-full object-cover"
+            src={`http://localhost:5000${selectedContact.avatar.fileUrl}`}
+            alt="Profile"
+          />
+          <h2 className="text-lg font-bold text-cyan-400">{selectedContact.username}</h2>
+          <span className={users.some(user => user._id === selectedContact._id && user.isOnline) ? "text-green-500" : "text-red-500"}>
+            {users.some(user => user._id === selectedContact._id && user.isOnline) ? "Online" : "Offline"}
+          </span>
+        </div>
+        <button className="text-cyan-400 hover:text-cyan-300">
+          <FiPhone size={24} />
+        </button>
       </div>
-      <button className="text-cyan-400 hover:text-cyan-300">
-        <FiPhone size={24} />
-      </button>
-    </div>
 
       {/* Chat Messages */}
       <div className="flex-1 p-4 overflow-y-auto bg-black text-white">
@@ -304,6 +320,16 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
                 )}
               </div>
             )}
+
+            {/* Delete button */}
+            {msg.sender === currentUser._id && (
+              <button
+                className="text-red-500 ml-2"
+                onClick={() => deleteMessage(msg._id)}
+              >
+                Delete
+              </button>
+            )}
           </div>
         ))}
         <div ref={scrollRef} />
@@ -319,73 +345,55 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
           plugins={[Zoom]}
           render={{
             slide: ({ slide }) =>
-              slide.type === "video" ? (
-                <video src={slide.src} controls className="w-full" />
+              slide.type === "image" ? (
+                <img src={slide.src} alt="Lightbox Image" />
               ) : (
-                <img src={slide.src} alt="" className="w-full" />
+                <video src={slide.src} controls />
               ),
           }}
         />
       )}
 
-      {/* Message Input Area */}
-      <div className="bg-black p-3 flex flex-col gap-3">
-        {/* File Preview Section */}
-        {filePreview && (
-          <div className="relative p-2 bg-gray-800 rounded-lg flex justify-center items-center mx-auto">
-            <div className="max-w-xs">{filePreview}</div>
-            <button
-              className="text-red-500 absolute top-2 right-2"
-              onClick={removeFile}
-            >
-              ✖
-            </button>
+      {/* Message Input */}
+      <form onSubmit={sendChat} className="bg-black p-4 flex items-center">
+        <button
+          type="button"
+          className="text-xl mr-2 text-gray-400 hover:text-cyan-400"
+          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+        >
+          <BsEmojiSmile />
+        </button>
+        {showEmojiPicker && (
+          <div className="absolute bottom-20 left-2">
+            <EmojiPicker onEmojiClick={handleEmojiClick} />
           </div>
         )}
-
-        {/* Input & Send Section */}
-        <div className="flex items-center gap-3 mt-2">
-          {/* File Attachment */}
-          <label className="cursor-pointer text-cyan-400">
-            <FiPaperclip size={24} />
-            <input type="file" className="hidden" onChange={handleFileChange} />
-          </label>
-            {/* Emoji Picker */}
-  <div className="relative">
-    <BsEmojiSmile
-      size={24}
-      className="cursor-pointer text-cyan-400"
-      onClick={() => setShowEmojiPicker((prev) => !prev)}
-    />
-    {showEmojiPicker && (
-      <div className="absolute bottom-10 left-0 z-50">
-        <EmojiPicker onEmojiClick={handleEmojiClick} />
-      </div>
-    )}
-  </div>
-
-          {/* Text Input */}
-          <input
-            type="text"
-            className="flex-1 bg-gray-800 text-white p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
-            placeholder="Type a message..."
-            value={messages}
-            onChange={(e) => setMessages(e.target.value)}
-            style={{ width: "80%" }}
-          />
-
-          {/* Send Button */}
-          <StarBorder
-            as="button"
-            className="custom-class ml-2 w-[15%]"
-            color="cyan"
-            speed="5s"
-            onClick={sendChat}
-          >
-            Send
-          </StarBorder>
-        </div>
-      </div>
+        <input
+          type="text"
+          value={messages}
+          onChange={(e) => setMessages(e.target.value)}
+          placeholder="Type a message"
+          className="bg-gray-700 text-white w-full p-3 rounded-md focus:outline-none"
+        />
+        <input
+          type="file"
+          onChange={handleFileChange}
+          className="hidden"
+          id="file-input"
+        />
+        <label
+          htmlFor="file-input"
+          className="cursor-pointer ml-2 text-cyan-400 hover:text-cyan-300"
+        >
+          <FiPaperclip size={20} />
+        </label>
+        <button
+          type="submit"
+          className="ml-2 bg-cyan-400 text-black px-4 py-2 rounded-md hover:bg-cyan-300"
+        >
+          Send
+        </button>
+      </form>
     </div>
   );
 };

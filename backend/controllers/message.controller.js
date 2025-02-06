@@ -1,4 +1,4 @@
-// messages.controller.js (Backend Controller)
+// Corrected message.controller.js
 const mongoose = require("mongoose");
 const Message = require("../models/messages.model");
 const multer = require("multer");
@@ -16,6 +16,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Fetch messages between sender and receiver
 module.exports.getMessages = async (req, res) => {
   const { sender, receiver } = req.params;
 
@@ -68,5 +69,34 @@ module.exports.addMessage = async (req, res) => {
   } catch (error) {
     console.error("Error saving message:", error);
     res.status(500).send("Error saving message");
+  }
+};
+
+// Delete a message
+module.exports.deleteMessage = async (req, res) => {
+  const { messageId, userId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(messageId)) {
+    return res.status(400).send("Invalid message ID");
+  }
+
+  try {
+    // Find the message by ID and check if it belongs to the user
+    const message = await Message.findById(messageId);
+
+    if (!message) {
+      return res.status(404).send("Message not found");
+    }
+
+    if (message.sender.toString() !== userId) {
+      return res.status(403).send("You are not authorized to delete this message");
+    }
+
+    // Delete the message
+    await Message.findByIdAndDelete(messageId);
+
+    res.status(200).send("Message deleted successfully");
+  } catch (error) {
+    res.status(500).send("Error deleting message");
   }
 };

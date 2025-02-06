@@ -1,6 +1,6 @@
 // messages.routes.js (Backend Routes)
 const express = require("express");
-const { getMessages, addMessage } = require("../controllers/message.controller");
+const { getMessages, addMessage, deleteMessage } = require("../controllers/message.controller");
 const authMiddleware = require("../middleware/authMiddleware");
 const multer = require("multer");
 const path = require("path");
@@ -24,5 +24,8 @@ router.get("/getMessages/:sender/:receiver", authMiddleware, getMessages);
 
 // Route for adding a new message
 router.post("/addMessages", authMiddleware, upload.single("file"), addMessage);
+
+router.delete('/deleteMessage/:messageId/:userId', authMiddleware,  deleteMessage);
+
 
 module.exports = router;
