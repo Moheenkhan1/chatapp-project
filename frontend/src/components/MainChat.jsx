@@ -27,24 +27,33 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); 
 
-  // Fetch messages
+// Fetch messages & mark as read
   useEffect(() => {
     const fetchMessages = async () => {
       if (!selectedContact || !currentUser) return;
 
       try {
+        // Fetch messages
         const response = await axios.get(
           `http://localhost:5000/messages/getMessages/${currentUser._id}/${selectedContact._id}`,
           { withCredentials: true }
         );
         setChat(response.data);
+
+        // Mark messages as read
+        await axios.post(
+          "http://localhost:5000/api/mark-messages-read",
+          { senderId: selectedContact._id },
+          { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        );
+
       } catch (error) {
         console.error("Error fetching messages:", error.response?.data || error.message);
       }
     };
 
     fetchMessages();
-  }, [currentUser, selectedContact,chat]);
+  }, [currentUser, selectedContact]);
 
   // Handle sending messages
   const sendChat = async (e) => {
@@ -161,9 +170,22 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
     console.log('users:',users)
   }, [incomingMsg]);
 
+  // useEffect(() => {
+  //   scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  // }, [chat]);
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    const chatContainer = scrollRef.current?.parentElement;
+    
+    if (!chatContainer) return;
+  
+    // Check if the user is near the bottom
+    const isAtBottom = chatContainer.scrollHeight - chatContainer.scrollTop <= chatContainer.clientHeight + 50;
+  
+    if (isAtBottom) {
+      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [chat]);
+  
 
   // Handle file selection
   const handleFileChange = (e) => {
@@ -246,7 +268,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
       <div className="flex-1 p-4 overflow-y-auto bg-black text-white">
         {chat.map((msg, index) => (
           <div key={index} className={`flex mb-2 ${msg.sender === currentUser._id ? "justify-end" : "justify-start"}`}>
-            {msg.message && (
+            {msg.message?.text && (
               <div className={`p-3 rounded-lg max-w-xs ${msg.sender === currentUser._id ? "bg-cyan-400 text-black" : "bg-gray-700 text-white"}`}>
                 <p>{msg.message.text}</p>
               </div>
@@ -257,7 +279,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
               <div className="mt-2">
                 {msg.message.fileType === "image" && (
                   <img
-                    className="max-w-xs rounded-lg cursor-pointer"
+                    className="max-w-xs rounded-lg cursor-pointer bg-cyan-400/20 p-1 shadow-md block"
                     src={`http://localhost:5000${msg.message.fileUrl}`}
                     alt="Shared"
                     onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`)}
@@ -266,7 +288,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
 
                 {msg.message.fileType === "video" && (
                   <video
-                    className="max-w-xs rounded-lg cursor-pointer"
+                    className="max-w-xs rounded-lg cursor-pointer bg-cyan-400/20 p-1 shadow-md block"
                     src={`http://localhost:5000${msg.message.fileUrl}`}
                     controls
                     onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`)}
