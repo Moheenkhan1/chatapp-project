@@ -6,35 +6,29 @@ import axios from "axios";
 import { UserDataContext } from "../Contexts/UserContext";
 import { io } from 'socket.io-client'
 
+
 const Home = () => {
-  const socket = useRef();
+  const socket = useRef(null);
 
   const [selectedContact, setSelectedContact] = useState(null);
   const navigate = useNavigate();
   const { user } = useContext(UserDataContext); // Assuming user context is correctly set
   const [currentUser, setCurrentUser] = useState(null);
-  const [contacts, setContacts] = useState([]); // Stores the list of contacts
+  const [contacts, setContacts] = useState([]); // Stores the list of contacts 
 
-  useEffect(() => {
-    const userFromStorage = localStorage.getItem('user');
-    if (userFromStorage) {
-      setCurrentUser(JSON.parse(userFromStorage)); // Set current user from localStorage
-    } else {
-      navigate('/login'); // Redirect to login if user is not found
-    }
-
-    // const authResponse = async()=>{
-
-    //   const response = await axios.post('http://localhost:5000/home/auth', { withCredentials: true })
-
-    //   if(response.status !== 200){
-    //     navigate('/login')
-    //   }
-
-    // }
+ // Load user from local storage
+ useEffect(() => {
+  const userFromStorage = localStorage.getItem("user");
+  if (userFromStorage) {
+    const sample = JSON.parse(userFromStorage);
+    setCurrentUser(sample);
+  } else {
+    navigate("/login"); // Redirect to login if no user is found
+  }
+}, [navigate]);
 
 
-  }, [navigate]);
+  
 
   useEffect(()=>{
     if(currentUser){
@@ -42,6 +36,37 @@ const Home = () => {
       socket.current.emit("add-user",currentUser._id);
     }
   },[currentUser])
+
+
+  // Initialize WebSocket connection
+  useEffect(() => {
+    if (!currentUser || !currentUser._id) return;
+
+    if (!socket.current) {
+      socket.current = io("http://localhost:5000", {
+        withCredentials: true,
+        reconnection: true,
+        reconnectionAttempts: 10,
+        reconnectionDelay: 5000,
+      });
+
+      socket.current.on("connect", () => {
+        console.log("Socket connected:", socket.current.id);
+        socket.current.emit("add-user", currentUser._id);
+      });
+
+      socket.current.on("update-user-status", ({ userId, isOnline }) => {
+        console.log(`User ${userId} is now ${isOnline ? "Online" : "Offline"}`);
+      });
+    }
+
+    return () => {
+      if (socket.current) {
+        socket.current.disconnect();
+        socket.current = null;
+      }
+    };
+  }, [currentUser]);
 
   // Fetch contacts from the server (assuming this API exists)
   useEffect(() => {
@@ -58,6 +83,7 @@ const Home = () => {
 
     fetchContacts();
   }, [currentUser]);
+
 
   return (
     <div className="flex h-screen bg-black text-white overflow-hidden">

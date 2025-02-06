@@ -24,6 +24,7 @@ const UserSchema = new mongoose.Schema({
       type: String, 
     },
   },
+  isOnline: { type: Boolean, default: false }, // Online status field
 });
 
 module.exports = mongoose.model('User', UserSchema);

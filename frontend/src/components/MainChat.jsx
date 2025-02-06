@@ -7,6 +7,7 @@ import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import StarBorder from "../components/StarBorderButton";
 import { BsEmojiSmile } from "react-icons/bs";  
 import EmojiPicker from "emoji-picker-react";
+import { useOnlineUsers } from '../Contexts/OnlineUsersContext';
 
 const MainChat = ({ selectedContact, currentUser, socket }) => {
   const scrollRef = useRef();
@@ -15,6 +16,9 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
   const [incomingMsg, setIncomingMsg] = useState("");
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
+
+  const [users, setUsers] = useState([]);
+  const { setOnlineUsers } = useOnlineUsers();
 
   // Lightbox States
   const [lightboxMedia, setLightboxMedia] = useState([]);
@@ -40,7 +44,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
     };
 
     fetchMessages();
-  }, [currentUser, selectedContact]);
+  }, [currentUser, selectedContact,chat]);
 
   // Handle sending messages
   const sendChat = async (e) => {
@@ -87,8 +91,74 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
     }
   }, []);
 
+
+  // online users
+  useEffect(() => {
+    if (!socket.current || !currentUser?._id) {
+      console.log("Socket or user not available");
+      return;
+    }
+
+    // Get stored online users from localStorage
+    const storedUsers = JSON.parse(localStorage.getItem('onlineUsers') || '[]');
+    
+    // Update local state only
+    setUsers(storedUsers);
+
+    console.log("Initializing online status for user:", currentUser._id);
+
+    // Request current online users from server
+    socket.current.emit('get-online-users');
+
+    const handleStatusUpdate = (data) => {
+      console.log("Received status update:", data);
+      
+      if (!data || !data.userId) {
+        console.error("Received invalid data in handleStatusUpdate:", data);
+        return;
+      }
+
+      setUsers((prevUsers) => {
+        const updatedUsers = prevUsers.filter(user => user._id !== data.userId);
+        const newUsers = [...updatedUsers, { _id: data.userId, isOnline: data.isOnline }];
+        // Store in localStorage
+        localStorage.setItem('onlineUsers', JSON.stringify(newUsers));
+        return newUsers;
+      });
+    };
+
+    const handleOnlineUsers = (onlineUsers) => {
+      console.log("Received online users list:", onlineUsers);
+      setUsers(onlineUsers);
+      localStorage.setItem('onlineUsers', JSON.stringify(onlineUsers));
+    };
+
+    // Set up socket listeners
+    socket.current.on("update-user-status", handleStatusUpdate);
+    socket.current.on("online-users", handleOnlineUsers);
+
+    // Emit user online status
+    socket.current.emit("user-online", currentUser._id);
+
+    // Cleanup function
+    return () => {
+      if (socket.current && currentUser?._id) {
+        console.log("Cleaning up socket listeners for user:", currentUser._id);
+        socket.current.off("update-user-status", handleStatusUpdate);
+        socket.current.off("online-users", handleOnlineUsers);
+        socket.current.emit("user-offline", currentUser._id);
+      }
+    };
+  }, [currentUser?._id, socket.current]);
+
+  // Add a separate useEffect to update the context when users state changes
+  useEffect(() => {
+    setOnlineUsers(users);
+  }, [users, setOnlineUsers]);
+
   useEffect(() => {
     incomingMsg && setChat((prev) => [...prev, incomingMsg]);
+    console.log('users:',users)
   }, [incomingMsg]);
 
   useEffect(() => {
@@ -163,6 +233,9 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
           alt="Profile"
         />
         <h2 className="text-lg font-bold text-cyan-400">{selectedContact.username}</h2>
+        <span className={users.some(user => user._id === selectedContact._id && user.isOnline) ? "text-green-500" : "text-red-500"}>
+          {users.some(user => user._id === selectedContact._id && user.isOnline) ? "Online" : "Offline"}
+        </span>
       </div>
       <button className="text-cyan-400 hover:text-cyan-300">
         <FiPhone size={24} />
@@ -173,13 +246,14 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
       <div className="flex-1 p-4 overflow-y-auto bg-black text-white">
         {chat.map((msg, index) => (
           <div key={index} className={`flex mb-2 ${msg.sender === currentUser._id ? "justify-end" : "justify-start"}`}>
-            {msg.message.text && (
+            {msg.message && (
               <div className={`p-3 rounded-lg max-w-xs ${msg.sender === currentUser._id ? "bg-cyan-400 text-black" : "bg-gray-700 text-white"}`}>
                 <p>{msg.message.text}</p>
               </div>
             )}
 
-            {msg.message.fileUrl && (
+            
+            {msg.message.fileUrl !== null && msg.message.fileUrl && (
               <div className="mt-2">
                 {msg.message.fileType === "image" && (
                   <img

@@ -3,6 +3,9 @@ import Squares from "../components/SquaresBG";
 import StarBorder from "../components/StarBorderButton";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Link } from 'react-router-dom'
+import { ToastContainer, toast , Bounce } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 function Register() {
   const [file, setFile] = useState(null);
@@ -17,7 +20,17 @@ function Register() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match!", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark", // You can change this to "light" if needed
+      });
+    
       return;
     }
 
@@ -27,27 +40,58 @@ function Register() {
     formData.append("password", password);
     if (file) formData.append("file", file);
 
-    const response = await axios.post(
-      "http://localhost:5000/user/register",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
+    try{
+      const response = await axios.post(
+        "http://localhost:5000/user/register",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        }
+      );
+  
+      if (response.status === 200) {
+        toast.success('Register Successfull.! Login Now', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+          });
+        navigate("/login");
       }
-    );
 
-    if (response.status === 200) {
-      navigate("/login");
+    }catch(error){
+
+      if (
+        error.response.status === 400 ||
+        error.response.status === 401 ||
+        error.response.status === 500
+      ) {
+        const message=error.response.data.message
+        toast.error(message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+          });
+        
+      }
+    };
+
     }
 
-    if (
-      response.status === 400 ||
-      response.status === 401 ||
-      response.status === 500
-    ) {
-      alert(response.data.message);
-    }
-  };
+
+
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -191,7 +235,7 @@ function Register() {
             </div>
 
             {/* Submit Button */}
-            <div>
+            <div className="flex flex-col text-center" >
               <StarBorder
                 as="button"
                 className="custom-class ml-[12.2rem] w-[40%]"
@@ -200,6 +244,8 @@ function Register() {
               >
                 Register
               </StarBorder>
+
+              <Link to={'/login'} className="text-white text-xl " > Already a User.? Login here.! </Link>
             </div>
           </form>
         </div>

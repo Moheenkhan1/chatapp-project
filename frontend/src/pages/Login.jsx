@@ -4,6 +4,10 @@ import StarBorder from '../components/StarBorderButton';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { UserDataContext } from '../Contexts/UserContext';
+import { Link } from 'react-router-dom';
+import { ToastContainer, toast , Bounce } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+
 
 function Login() {
   const navigate = useNavigate();
@@ -32,11 +36,32 @@ function Login() {
         console.log("User authenticated:", response.data.user);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         // setUser(response.data.user);
+        toast.success('Login Successfull.!', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+          });
         navigate("/");
       }
     } catch (error) {
-      console.error("Login failed:", error.response?.data?.message || error.message);
-      alert(error.response?.data?.message || "An error occurred");
+      const mesg = error.response.data.message
+      toast.error(mesg, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+        });
     }
   };
 
@@ -74,9 +99,12 @@ function Login() {
               />
             </div>
           </div>
-          <div className="text-center">
+          <div className="text-center flex flex-col">
             <StarBorder as="button" color="cyan" speed="5s">Login</StarBorder>
+
+            <Link to={'/register'} className='text-white text-xl' >New User.? Register Here</Link>
           </div>
+
         </form>
       </div>
     </div>

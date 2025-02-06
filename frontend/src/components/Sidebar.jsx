@@ -4,15 +4,20 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import StarBorder from "../components/StarBorderButton";
 import { FaTimes } from 'react-icons/fa';
+import { useOnlineUsers } from '../Contexts/OnlineUsersContext';
+import { ToastContainer, toast , Bounce } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 
-const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser }) => {
+const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket }) => {
   const [search, setSearch] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [selectedContactId, setSelectedContactId] = useState(null);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null); 
+
+  const { onlineUsers } = useOnlineUsers();
 
   const navigate = useNavigate();
   const settingsRef = useRef(null); 
@@ -66,6 +71,17 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser }) => {
       if (response.status === 200) {
         localStorage.removeItem("user");
         setCurrentUser(null);
+        toast.success('Logged Out Successfully.!', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+          });
         navigate("/login");
       }
     } catch (error) {
@@ -83,6 +99,7 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser }) => {
     setSelectedPhoto(photoUrl);
     setIsPhotoOpen(true);
   };
+  
 
   return (
     <div className="relative w-1/4 bg-black p-5 shadow-md text-white overflow-auto">
@@ -117,6 +134,9 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser }) => {
               onClick={(e) => handlePhotoClick(`http://localhost:5000${contact.avatar.fileUrl}`, e)}
             />
             <p className="text-xl">{contact.username}</p>
+            {onlineUsers.some(user => user._id === contact._id && user.isOnline) && (
+              <div className="w-5 h-5 rounded-full bg-green-500 relative ml-auto"></div>
+            )}
           </li>
         ))}
       </ul>

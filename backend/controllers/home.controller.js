@@ -11,6 +11,6 @@ module.exports.getContacts = async (req, res) => {
   };
 
   module.exports.authHome = async (req,res)=>{
-    res.status(200).json({Message : " Authorization Successful "})
+    res.status(200).json({Message : " Authorization Successful " })
   }
   
