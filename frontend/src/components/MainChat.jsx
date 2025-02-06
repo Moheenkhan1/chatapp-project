@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FiPaperclip, FiPhone } from "react-icons/fi";
+import { FiPaperclip, FiPhone, FiX } from "react-icons/fi";
 import axios from "axios";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
@@ -8,6 +8,7 @@ import StarBorder from "../components/StarBorderButton";
 import { BsEmojiSmile } from "react-icons/bs";  
 import EmojiPicker from "emoji-picker-react";
 import { useOnlineUsers } from '../Contexts/OnlineUsersContext';
+import { MdCancel } from "react-icons/md";
 
 const MainChat = ({ selectedContact, currentUser, socket }) => {
   const scrollRef = useRef();
@@ -26,6 +27,8 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); 
+  
+
 
   // Fetch messages & mark as read
   useEffect(() => {
@@ -188,8 +191,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
     }
   }, [chat]);
   
-
-  // Handle file selection
+// Handle file selection 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
@@ -215,21 +217,22 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
     setFilePreview(null);
   };
 
-  // Handle Image/Video Click for Lightbox
-  const handleMediaClick = (src) => {
-    const media = chat
-      .filter((msg) => msg.message.fileType === "image" || msg.message.fileType === "video")
-      .map((msg) => ({
-        src: `http://localhost:5000${msg.message.fileUrl}`,
-        type: msg.message.fileType,
-      }));
+ // Handle Image/Video Click for Lightbox
+ const handleMediaClick = (src, type) => {
+  const media = chat
+    .filter((msg) => msg.message.fileType === "image" )
+    .map((msg) => ({
+      src: `http://localhost:5000${msg.message.fileUrl}`,
+      type: msg.message.fileType,
+    }));
 
-    const index = media.findIndex((item) => item.src === src);
-
-    setLightboxMedia(media);
-    setCurrentMediaIndex(index);
-    setIsLightboxOpen(true);
-  };
+  const index = media.findIndex((item) => item.src === src);
+  setLightboxMedia(media);
+  setCurrentMediaIndex(index);
+  setIsLightboxOpen(true);
+};
+  
+  
 
   const deleteMessage = async (msgId) => {
     try {
@@ -271,8 +274,16 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
             alt="Profile"
           />
           <h2 className="text-lg font-bold text-cyan-400">{selectedContact.username}</h2>
-          <span className={users.some(user => user._id === selectedContact._id && user.isOnline) ? "text-green-500" : "text-red-500"}>
-            {users.some(user => user._id === selectedContact._id && user.isOnline) ? "Online" : "Offline"}
+          <span
+            className={
+              users.some((user) => user._id === selectedContact._id && user.isOnline)
+                ? "text-green-500"
+                : "text-red-500"
+            }
+          >
+            {users.some((user) => user._id === selectedContact._id && user.isOnline)
+              ? "Online"
+              : "Offline"}
           </span>
         </div>
         <button className="text-cyan-400 hover:text-cyan-300">
@@ -283,33 +294,39 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
       {/* Chat Messages */}
       <div className="flex-1 p-4 overflow-y-auto bg-black text-white">
         {chat.map((msg, index) => (
-          <div key={index} className={`flex mb-2 ${msg.sender === currentUser._id ? "justify-end" : "justify-start"}`}>
+          <div
+            key={index}
+            className={`flex mb-2 ${msg.sender === currentUser._id ? "justify-end" : "justify-start"}`}
+          >
             {msg.message?.text && (
-              <div className={`p-3 rounded-lg max-w-xs ${msg.sender === currentUser._id ? "bg-cyan-400 text-black" : "bg-gray-700 text-white"}`}>
+              <div
+                className={`p-3 rounded-lg max-w-xs ${
+                  msg.sender === currentUser._id ? "bg-cyan-400 text-black" : "bg-gray-700 text-white"
+                }`}
+              >
                 <p>{msg.message.text}</p>
               </div>
             )}
 
-            
             {msg.message.fileUrl !== null && msg.message.fileUrl && (
               <div className="mt-2">
-                {msg.message.fileType === "image" && (
-                  <img
-                    className="max-w-xs rounded-lg cursor-pointer bg-cyan-400/20 p-1 shadow-md block"
-                    src={`http://localhost:5000${msg.message.fileUrl}`}
-                    alt="Shared"
-                    onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`)}
-                  />
-                )}
-
-                {msg.message.fileType === "video" && (
-                  <video
-                    className="max-w-xs rounded-lg cursor-pointer bg-cyan-400/20 p-1 shadow-md block"
-                    src={`http://localhost:5000${msg.message.fileUrl}`}
-                    controls
-                    onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`)}
-                  />
-                )}
+              {msg.message.fileType === "image" && (
+  <img
+    className="max-w-xs rounded-lg cursor-pointer bg-cyan-400/20 p-1 shadow-md block"
+    src={`http://localhost:5000${msg.message.fileUrl}`}
+    alt="Shared"
+    onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`, 'image')}
+  />
+)}
+{/* Video File */}
+{msg.message.fileType === "video" && (
+  <video
+    className="max-w-xs rounded-lg cursor-pointer bg-cyan-400/20 p-1 shadow-md block"
+    src={`http://localhost:5000${msg.message.fileUrl}`}
+    controls
+    onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`, 'video')}
+  />
+)}
 
                 {msg.message.fileType === "audio" && (
                   <audio
@@ -334,28 +351,50 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
         ))}
         <div ref={scrollRef} />
       </div>
+      <Lightbox
+  open={isLightboxOpen}
+  close={() => setIsLightboxOpen(false)}
+  slides={lightboxMedia.map((media) => ({
+    src: media.src,
+    type: media.type === "video" ? "video" : "image", // Ensure that type is passed as either 'image' or 'video'
+  }))}
+  currentIndex={currentMediaIndex}
+  plugins={[Zoom]}
+/>
 
-      {/* Lightbox */}
-      {isLightboxOpen && (
-        <Lightbox
-          open={isLightboxOpen}
-          close={() => setIsLightboxOpen(false)}
-          slides={lightboxMedia}
-          index={currentMediaIndex}
-          plugins={[Zoom]}
-          render={{
-            slide: ({ slide }) =>
-              slide.type === "image" ? (
-                <img src={slide.src} alt="Lightbox Image" />
-              ) : (
-                <video src={slide.src} controls />
-              ),
-          }}
-        />
+
+        {/* File Preview Section */}
+        {filePreview && (
+        <div className="p-3 bg-black border-t border-gray-700 flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex gap-2">
+                <div className="max-w-xs">
+                  {/* Centering the image in the preview */}
+                  <div className="flex justify-center">
+                    {filePreview}
+                  </div>
+                </div>
+                <button
+                  onClick={removeFile}
+                  className="text-red-500 text-xl"
+                >
+                  <MdCancel />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Message Input */}
       <form onSubmit={sendChat} className="bg-black p-4 flex items-center">
+      <label
+          htmlFor="file-input"
+          className="cursor-pointer ml-2 text-cyan-400 hover:text-cyan-300 pr-3"
+        >
+          <FiPaperclip size={23} />
+        </label>
         <button
           type="button"
           className="text-xl mr-2 text-gray-400 hover:text-cyan-400"
@@ -364,7 +403,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
           <BsEmojiSmile />
         </button>
         {showEmojiPicker && (
-          <div className="absolute bottom-20 left-2">
+          <div className="absolute bottom-20 ">
             <EmojiPicker onEmojiClick={handleEmojiClick} />
           </div>
         )}
@@ -381,21 +420,24 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
           className="hidden"
           id="file-input"
         />
-        <label
-          htmlFor="file-input"
-          className="cursor-pointer ml-2 text-cyan-400 hover:text-cyan-300"
-        >
-          <FiPaperclip size={20} />
-        </label>
-        <button
+        <StarBorder
+          as="button"
+          className="custom-class ml-[1.2rem] w-[15%]  text-black px-4 py-2 rounded-md"
+          color="cyan"
+          speed="5s"
           type="submit"
-          className="ml-2 bg-cyan-400 text-black px-4 py-2 rounded-md hover:bg-cyan-300"
-        >
+          >
           Send
-        </button>
+          </StarBorder>
+                
+        
       </form>
     </div>
   );
 };
 
+
 export default MainChat;
+
+
+

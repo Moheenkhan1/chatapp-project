@@ -5,9 +5,8 @@ import axios from "axios";
 import StarBorder from "../components/StarBorderButton";
 import { FaTimes } from 'react-icons/fa';
 import { useOnlineUsers } from '../Contexts/OnlineUsersContext';
-import { ToastContainer, toast , Bounce } from 'react-toastify';
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-
 
 const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket }) => {
   const [search, setSearch] = useState("");
@@ -99,13 +98,11 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket }) =
     setSelectedPhoto(photoUrl);
     setIsPhotoOpen(true);
   };
-  
 
   return (
     <div className="relative w-1/4 bg-black p-5 shadow-md text-white overflow-auto">
       <h2 className="text-lg text-cyan-400 font-bold mb-4">Chats</h2>
       
-
       {/* Search Bar */}
       <input
         type="text"
@@ -127,16 +124,19 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket }) =
             }`}
             onClick={() => handleContactClick(contact)}
           >
-            <img
-              className="w-[4rem] h-[4rem] rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
-              src={`http://localhost:5000${contact.avatar.fileUrl}`}
-              alt="profile"
-              onClick={(e) => handlePhotoClick(`http://localhost:5000${contact.avatar.fileUrl}`, e)}
-            />
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src={`http://localhost:5000${contact.avatar.fileUrl}`}
+                alt="profile"
+                onClick={(e) => handlePhotoClick(`http://localhost:5000${contact.avatar.fileUrl}`, e)}
+              />
+              {/* Online Status Indicator */}
+              {onlineUsers.some(user => user._id === contact._id && user.isOnline) && (
+                <div className="w-5 h-5 rounded-full bg-green-500 absolute bottom-0 right-0 transform translate-x-1 translate-y-1"></div>
+              )}
+            </div>
             <p className="text-xl">{contact.username}</p>
-            {onlineUsers.some(user => user._id === contact._id && user.isOnline) && (
-              <div className="w-5 h-5 rounded-full bg-green-500 relative ml-auto"></div>
-            )}
           </li>
         ))}
       </ul>
@@ -144,7 +144,7 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket }) =
       {/* Settings Icon */}
       <div
         ref={settingsIconRef} // Attach the ref to the settings icon
-        className="absolute bottom-5 left-5 text-cyan-400 cursor-pointer"
+        className="fixed bottom-5 left-5 text-cyan-400 cursor-pointer"
         onClick={toggleSettings}
       >
         <FaCog size={30} />
@@ -154,17 +154,17 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket }) =
       {settingsOpen && currentUser && (
         <div
           ref={settingsRef} // Attach the ref to this div
-          className="absolute bottom-0 left-0 w-full p-6 shadow-2xl rounded-tl-lg transition-transform duration-700 ease-out transform bg-gray-800 opacity-100"
+          className="fixed bottom-0 w-[24%] left-0 p-6 shadow-2xl rounded-tl-lg transition-transform duration-700 ease-out transform bg-gray-800 opacity-100"
         >
           {/* <h3 className="text-lg text-cyan-400 font-bold mb-4">{currentUser.username}</h3> */}
           <div className="flex items-center space-x-4 mb-4">
-  <img
-    className="w-12 h-12 rounded-full object-cover"
-    src={`http://localhost:5000${currentUser.avatar.fileUrl}`}
-    alt="Profile"
-  />
-  <h3 className="text-lg text-cyan-400 font-bold">{currentUser.username}</h3>
-</div>
+            <img
+              className="w-12 h-12 rounded-full object-cover"
+              src={`http://localhost:5000${currentUser.avatar.fileUrl}`}
+              alt="Profile"
+            />
+            <h3 className="text-lg text-cyan-400 font-bold">{currentUser.username}</h3>
+          </div>
           <StarBorder as="button" className="w-full mb-4" color="cyan" speed="5s">
             Change Password
           </StarBorder>
@@ -173,7 +173,8 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket }) =
           </StarBorder>
         </div>
       )}
-      {/* photo view */}
+
+      {/* Photo View */}
       {isPhotoOpen && selectedPhoto && (
         <div
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 z-50"
