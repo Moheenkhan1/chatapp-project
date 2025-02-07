@@ -8,7 +8,7 @@ import { useOnlineUsers } from '../Contexts/OnlineUsersContext';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
-const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket }) => {
+const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , setShowChat , showChat }) => {
   const [search, setSearch] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [contacts, setContacts] = useState([]);
@@ -91,6 +91,8 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket }) =
   const handleContactClick = (contact) => {
     setSelectedContact(contact);
     setSelectedContactId(contact._id);
+
+    setShowChat(true); // Hide sidebar on mobile
   };
 
   const handlePhotoClick = (photoUrl, e) => {
@@ -100,7 +102,7 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket }) =
   };
 
   return (
-    <div className="relative w-1/4 bg-white p-5 shadow-md text-white overflow-auto">
+    <div className={`relative w-1/4 max-sm:w-full bg-white p-5 shadow-md text-white overflow-auto ${showChat ? "max-sm:hidden" : "max-sm:flex max-sm:flex-col"}`}>
       <h2 className="text-[1.7rem] text-[#4169E1] font-extrabold mb-4">Chats</h2>
       
       {/* Search Bar */}

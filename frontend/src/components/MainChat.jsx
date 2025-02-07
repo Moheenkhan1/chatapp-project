@@ -9,8 +9,9 @@ import { BsEmojiSmile } from "react-icons/bs";
 import EmojiPicker from "emoji-picker-react";
 import { useOnlineUsers } from '../Contexts/OnlineUsersContext';
 import { MdCancel } from "react-icons/md";
+import { FiArrowLeft } from "react-icons/fi";
 
-const MainChat = ({ selectedContact, currentUser, socket }) => {
+const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showChat }) => {
   const scrollRef = useRef();
   const [messages, setMessages] = useState("");
   const [chat, setChat] = useState([]);
@@ -285,16 +286,19 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
   
 
   return (
-    <div className="flex flex-col flex-1 bg-white">
+    <div className={`flex flex-col flex-1 bg-white ${showChat ? "max-sm:flex" : "max-sm:hidden"}`}>
       {/* Chat Header with Profile Picture */}
-      <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex justify-between items-center">
-        <div className="flex items-center gap-3">
+      <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex  items-center">
+      <button className="max-sm:block hidden text-white text-xl mr-3" onClick={() => setShowChat(false)}>
+          <FiArrowLeft size={24} />
+        </button>
+        <div className="flex justify start gap-3 max-sm:ml-[1rem] ">
           <img
-            className="w-[3.5rem] h-[3.5rem] rounded-full object-cover ml-6 ring "
+            className="w-[3.5rem] h-[3.5rem] rounded-full object-cover ml-6 max-sm:ml-0 ring "
             src={`http://localhost:5000${selectedContact.avatar.fileUrl}`}
             alt="Profile"
           />
-          <div className=" ml-4 " >
+          <div className=" ml-4 max-sm:ml-2 " >
 
           <h2 className="text-[1.2rem] font-bold text-white">{selectedContact.username}</h2>
           <span
@@ -335,10 +339,10 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
             )}
 
             {msg.message.fileUrl !== null && msg.message.fileUrl && (
-              <div className="mt-2">
+              <div className="mt-2 max-sm:w-[40%] ">
               {msg.message.fileType === "image" && (
   <img
-    className="max-w-xs rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
+    className="max-w-xs max-sm:w-full rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
     src={`http://localhost:5000${msg.message.fileUrl}`}
     alt="Shared"
     onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`, 'image')}
@@ -347,7 +351,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
 {/* Video File */}
 {msg.message.fileType === "video" && (
   <video
-    className="max-w-xs rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
+    className="max-w-xs max-sm:w-full rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
     src={`http://localhost:5000${msg.message.fileUrl}`}
     controls
     onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`, 'video')}
@@ -438,7 +442,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
           value={messages}
           onChange={(e) => setMessages(e.target.value)}
           placeholder="Type a message"
-          className="bg-white text-black w-full p-3 rounded-md focus:outline-none"
+          className="bg-white text-black w-full max-sm:w-[60%] p-3 rounded-md focus:outline-none"
         />
         <input
           type="file"
@@ -447,7 +451,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
           id="file-input"
         />
         <button
-          className="custom-class shadow-lg shadow-indigo-500/50 ml-3 w-[10%]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2]  "
+          className="custom-class shadow-lg shadow-indigo-500/50 ml-3 w-[10%] max-sm:w-[20%]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2]  "
            type="submit"   
           >
             Send

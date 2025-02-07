@@ -16,6 +16,8 @@ const Home = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [contacts, setContacts] = useState([]); // Stores the list of contacts 
 
+  const [showChat, setShowChat] = useState(false); // Controls sidebar/chat visibility
+
  // Load user from local storage
  useEffect(() => {
   const userFromStorage = localStorage.getItem("user");
@@ -86,10 +88,14 @@ const Home = () => {
 
 
   return (
-    <div className="flex h-screen bg-black text-white overflow-hidden">
-      <Sidebar setSelectedContact={setSelectedContact} currentUser={currentUser} setCurrentUser={setCurrentUser} contacts={contacts} socket={socket} />
+    <div className="flex h-screen">
+       {/* <div className={`  max-sm:w-full ${showChat ? "max-sm:hidden" : "max-sm:flex"}`}> */}
+      <Sidebar setSelectedContact={setSelectedContact} currentUser={currentUser} setCurrentUser={setCurrentUser} contacts={contacts} socket={socket} setShowChat={setShowChat} showChat={showChat} />
+      {/* </div> */}
       <div className="w-[1px] bg-[#4169E1] "></div>
-      <MainChat selectedContact={selectedContact} currentUser={currentUser} socket={socket} setCurrentUser={setCurrentUser} />
+      {/* <div className={`${showChat ? "max-sm:flex" : "max-sm:hidden"}`}> */}
+      <MainChat selectedContact={selectedContact} currentUser={currentUser} socket={socket} setCurrentUser={setCurrentUser} setShowChat={setShowChat} showChat={showChat} />
+      {/* </div> */}
     </div>
   );
 };
