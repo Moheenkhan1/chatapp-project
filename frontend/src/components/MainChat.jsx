@@ -58,7 +58,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
     };
 
     fetchMessages();
-  }, [currentUser, selectedContact]);
+  }, [currentUser, selectedContact,chat]);
 
   // Handle sending messages
   const sendChat = async (e) => {
@@ -250,8 +250,8 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
 
   if (!selectedContact || !currentUser) {
     return (
-      <div className="flex flex-col flex-1 bg-black text-white items-center justify-center">
-        <h2 className="text-xl font-bold text-cyan-400 text-center">
+      <div className="flex flex-col flex-1 bg-white text-black items-center justify-center">
+        <h2 className="text-xl font-bold text-[#385AC2]  text-center">
           PLEASE SELECT A CONTACT TO START CHATTING
         </h2>
       </div>
@@ -264,20 +264,22 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
   
 
   return (
-    <div className="flex flex-col flex-1 bg-black">
+    <div className="flex flex-col flex-1 bg-white">
       {/* Chat Header with Profile Picture */}
-      <div className="bg-black text-white p-4 border-b border-gray-700 flex justify-between items-center">
+      <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <img
-            className="w-10 h-10 rounded-full object-cover"
+            className="w-[3.5rem] h-[3.5rem] rounded-full object-cover ml-6 ring "
             src={`http://localhost:5000${selectedContact.avatar.fileUrl}`}
             alt="Profile"
           />
-          <h2 className="text-lg font-bold text-cyan-400">{selectedContact.username}</h2>
+          <div className=" ml-4 " >
+
+          <h2 className="text-[1.2rem] font-bold text-white">{selectedContact.username}</h2>
           <span
             className={
               users.some((user) => user._id === selectedContact._id && user.isOnline)
-                ? "text-green-500"
+                ? "text-green-500 "
                 : "text-red-500"
             }
           >
@@ -285,14 +287,16 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
               ? "Online"
               : "Offline"}
           </span>
+
+          </div>
         </div>
-        <button className="text-cyan-400 hover:text-cyan-300">
+        {/* <button className="text-cyan-400 hover:text-cyan-300">
           <FiPhone size={24} />
-        </button>
+        </button> */}
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 p-4 overflow-y-auto bg-black text-white">
+      <div className="flex-1 p-4 overflow-y-auto bg-white text-black">
         {chat.map((msg, index) => (
           <div
             key={index}
@@ -301,7 +305,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
             {msg.message?.text && (
               <div
                 className={`p-3 rounded-lg max-w-xs ${
-                  msg.sender === currentUser._id ? "bg-cyan-400 text-black" : "bg-gray-700 text-white"
+                  msg.sender === currentUser._id ? "bg-[#4169E1] text-white" : "bg-gray-700 text-white"
                 }`}
               >
                 <p>{msg.message.text}</p>
@@ -312,7 +316,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
               <div className="mt-2">
               {msg.message.fileType === "image" && (
   <img
-    className="max-w-xs rounded-lg cursor-pointer bg-cyan-400/20 p-1 shadow-md block"
+    className="max-w-xs rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
     src={`http://localhost:5000${msg.message.fileUrl}`}
     alt="Shared"
     onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`, 'image')}
@@ -321,7 +325,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
 {/* Video File */}
 {msg.message.fileType === "video" && (
   <video
-    className="max-w-xs rounded-lg cursor-pointer bg-cyan-400/20 p-1 shadow-md block"
+    className="max-w-xs rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
     src={`http://localhost:5000${msg.message.fileUrl}`}
     controls
     onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`, 'video')}
@@ -365,7 +369,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
 
         {/* File Preview Section */}
         {filePreview && (
-        <div className="p-3 bg-black border-t border-gray-700 flex items-center gap-2">
+        <div className="p-3 bg-white border-t border-gray-700 flex items-center gap-2">
           <div className="flex items-center gap-2 w-full">
             <div className="flex items-center justify-between w-full">
               <div className="flex gap-2">
@@ -388,16 +392,16 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
       )}
 
       {/* Message Input */}
-      <form onSubmit={sendChat} className="bg-black p-4 flex items-center">
+      <form onSubmit={sendChat} className="bg-[#E8E8E8] border-t-2 border-[#4169E1] p-4 flex items-center">
       <label
           htmlFor="file-input"
-          className="cursor-pointer ml-2 text-cyan-400 hover:text-cyan-300 pr-3"
+          className="cursor-pointer ml-2 text-[#4169E1] hover:text-[#4169E1]-300 pr-3"
         >
           <FiPaperclip size={23} />
         </label>
         <button
           type="button"
-          className="text-xl mr-2 text-gray-400 hover:text-cyan-400"
+          className="text-xl mr-2 text-[#4169E1] hover:text-[#4169E1]-400"
           onClick={() => setShowEmojiPicker(!showEmojiPicker)}
         >
           <BsEmojiSmile />
@@ -412,7 +416,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
           value={messages}
           onChange={(e) => setMessages(e.target.value)}
           placeholder="Type a message"
-          className="bg-gray-700 text-white w-full p-3 rounded-md focus:outline-none"
+          className="bg-white text-black w-full p-3 rounded-md focus:outline-none"
         />
         <input
           type="file"
@@ -420,15 +424,12 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
           className="hidden"
           id="file-input"
         />
-        <StarBorder
-          as="button"
-          className="custom-class ml-[1.2rem] w-[15%]  text-black px-4 py-2 rounded-md"
-          color="cyan"
-          speed="5s"
-          type="submit"
+        <button
+          className="custom-class shadow-lg shadow-indigo-500/50 ml-3 w-[10%]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2]  "
+           type="submit"   
           >
-          Send
-          </StarBorder>
+            Send
+        </button>
                 
         
       </form>

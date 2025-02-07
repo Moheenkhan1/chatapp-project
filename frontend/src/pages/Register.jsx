@@ -6,6 +6,7 @@ import axios from "axios";
 import { Link } from 'react-router-dom'
 import { ToastContainer, toast , Bounce } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import BlobCursor from '../components/Blobcursor'
 
 function Register() {
   const [file, setFile] = useState(null);
@@ -28,7 +29,7 @@ function Register() {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "dark", // You can change this to "light" if needed
+        theme: "colored", // You can change this to "light" if needed
       });
     
       return;
@@ -100,19 +101,12 @@ function Register() {
 
   return (
     <>
-      <div className="min-h-screen min-w-screen flex items-center justify-center bg-[#060606] overflow-hidden">
-        <div className="absolute inset-0">
-          <Squares
-            speed={0.5}
-            squareSize={40}
-            direction="diagonal"
-            borderColor="#fff"
-            hoverFillColor="cyan"
-          />
-        </div>
-        <div className="max-w-[40%] w-full space-y-8 p-8 bg-[#0D0D0D] rounded-lg shadow-md z-10">
-          <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+      <div className="h-screen w-screen flex items-center justify-center bg-[#E8E8E8] overflow-hidden">
+      <BlobCursor className=' absolute inset-0 ' />
+        <div className="w-[40%]  space-y-8 p-8 bg-[#FFFFFF] rounded-lg  z-10 shadow-[0_45px_45px_rgba(0,0,0,0.25)] absolute ">
+          <div className="flex items-center  ml-[10rem] " >
+            <div className="pulse animate-pulseCustom mt-3 h-[2rem] w-[2rem] rounded-full bg-[#4169E1] "></div>
+            <h2 className="mt-3 ml-[1.5rem] text-3xl font-extrabold text-[#4169E1]">
               Chat App Project
             </h2>
           </div>
@@ -124,7 +118,7 @@ function Register() {
                   htmlFor="fileInput"
                   className="cursor-pointer flex flex-col items-center"
                 >
-                  <div className="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 overflow-hidden">
+                  <div className="w-20 h-20 bg-gray-300 ring shadow-xl shadow-indigo-500/50 rounded-full flex items-center justify-center text-gray-600 overflow-hidden">
                     {file ? (
                       <img
                         src={URL.createObjectURL(file)}
@@ -132,7 +126,7 @@ function Register() {
                         className="rounded-full object-cover w-full h-full"
                       />
                     ) : (
-                      <span>No Profile</span>
+                      <span>Upload</span>
                     )}
                   </div>
                   <input
@@ -141,7 +135,7 @@ function Register() {
                     onChange={handleFileChange}
                     className="hidden"
                   />
-                  <span className="text-cyan-400 mt-2">Upload Photo</span>
+                  <span className="text-[#4169E1] font-bold underline mt-2">Upload Photo</span>
                 </label>
               </div>
 
@@ -236,16 +230,13 @@ function Register() {
 
             {/* Submit Button */}
             <div className="flex flex-col text-center" >
-              <StarBorder
-                as="button"
-                className="custom-class ml-[12.2rem] w-[40%]"
-                color="cyan"
-                speed="5s"
+              <button
+                className="custom-class shadow-lg shadow-indigo-500/50 ml-[12.2rem] w-[40%]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2]  "
               >
                 Register
-              </StarBorder>
+              </button>
 
-              <Link to={'/login'} className="text-white text-xl " > Already a User.? Login here.! </Link>
+              <Link to={'/login'} className=" text-xl mt-2 " > Already a User.? <span className=" text-[indigo] underline " >Login here.!</span>  </Link>
             </div>
           </form>
         </div>

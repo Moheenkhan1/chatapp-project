@@ -88,7 +88,7 @@ const Home = () => {
   return (
     <div className="flex h-screen bg-black text-white overflow-hidden">
       <Sidebar setSelectedContact={setSelectedContact} currentUser={currentUser} setCurrentUser={setCurrentUser} contacts={contacts} socket={socket} />
-      <div className="w-[1px] bg-cyan-400"></div>
+      <div className="w-[1px] bg-[#4169E1] "></div>
       <MainChat selectedContact={selectedContact} currentUser={currentUser} socket={socket} setCurrentUser={setCurrentUser} />
     </div>
   );

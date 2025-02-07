@@ -7,6 +7,7 @@ import { UserDataContext } from '../Contexts/UserContext';
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast , Bounce } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import BlobCursor from '../components/Blobcursor';
 
 
 function Login() {
@@ -66,14 +67,17 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen min-w-screen flex items-center justify-center bg-[#060606] overflow-hidden">
-      <div className="absolute inset-0">
-        <Squares speed={0.5} squareSize={40} direction="diagonal" borderColor="#fff" hoverFillColor="cyan" />
-      </div>
-      <div className="max-w-[40%] w-full space-y-8 p-8 bg-[#0D0D0D] rounded-lg shadow-md z-10">
-        <h2 className="text-3xl font-extrabold text-white text-center">Chat App Project</h2>
+    <div className="h-screen w-screen flex items-center justify-center bg-[#E8E8E8] overflow-hidden">
+      <BlobCursor className=' absolute inset-0 ' />
+      <div className="w-[30%] h-[50%] space-y-8 p-8 bg-[#FFFFFF] rounded-lg  z-10 shadow-[0_45px_45px_rgba(0,0,0,0.25)] absolute ">
+      <div className="flex items-center  ml-[6.5rem] " >
+          <div className="pulse animate-pulseCustom mt-3 h-[2rem] w-[2rem] rounded-full bg-[#4169E1] "></div>
+            <h2 className="mt-3 ml-[1.5rem] text-3xl font-extrabold text-[#4169E1]">
+              Chat App Project
+            </h2>
+          </div>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
+          <div className="space-y-4 mt-10 ">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-white">Username</label>
               <input
@@ -99,11 +103,15 @@ function Login() {
               />
             </div>
           </div>
-          <div className="text-center flex flex-col">
-            <StarBorder as="button" color="cyan" speed="5s">Login</StarBorder>
+          <div className="flex flex-col text-center" >
+              <button
+                className="custom-class shadow-lg shadow-indigo-500/50 ml-[9.2rem] mt-9 w-[40%]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2]  "
+              >
+                Login
+              </button>
 
-            <Link to={'/register'} className='text-white text-xl' >New User.? Register Here</Link>
-          </div>
+              <Link to={'/login'} className=" text-xl mt-5 " > New here.? <span className=" text-[indigo] underline " >Register here.!</span>  </Link>
+            </div>
 
         </form>
       </div>
