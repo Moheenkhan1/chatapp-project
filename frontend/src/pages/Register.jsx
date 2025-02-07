@@ -101,24 +101,24 @@ function Register() {
 
   return (
     <>
-      <div className="h-screen w-screen flex items-center justify-center bg-[#E8E8E8] overflow-hidden">
+      <div className="max-h-screen max-w-screen flex items-center justify-center bg-[#E8E8E8] overflow-hidden">
       <BlobCursor className=' absolute inset-0 ' />
-        <div className="w-[40%]  space-y-8 p-8 bg-[#FFFFFF] rounded-lg  z-10 shadow-[0_45px_45px_rgba(0,0,0,0.25)] absolute ">
-          <div className="flex items-center  ml-[10rem] " >
-            <div className="pulse animate-pulseCustom mt-3 h-[2rem] w-[2rem] rounded-full bg-[#4169E1] "></div>
-            <h2 className="mt-3 ml-[1.5rem] text-3xl font-extrabold text-[#4169E1]">
+        <div className="w-[40%] max-sm:w-[75%] h:[50%] max-sm:h-[60%]  space-y-8 p-8 bg-[#FFFFFF] rounded-lg  z-10 shadow-[0_45px_45px_rgba(0,0,0,0.25)] absolute top-[10rem] max-sm:top-[7rem] ">
+          <div className="flex items-center  ml-[10rem] max-sm:ml-0 max-sm:mt-[-1rem] " >
+            <div className="pulse animate-pulseCustom mt-3 max-sm:mt-1 h-[2rem] max-sm:h-[1.5rem] w-[2rem] max-sm:w-[1.5rem] rounded-full bg-[#4169E1] "></div>
+            <h2 className="mt-3 max-sm:mt-1 ml-[1.5rem] max-sm:ml-[0.8rem] text-3xl max-sm:text-xl font-extrabold text-[#4169E1]">
               Chat App Project
             </h2>
           </div>
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <form className="mt-8 max-sm:mt-2 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm space-y-4">
               {/* Profile Picture Upload */}
               <div className="flex flex-col items-center space-y-4">
                 <label
                   htmlFor="fileInput"
-                  className="cursor-pointer flex flex-col items-center"
+                  className="max-sm:ml-[6rem] cursor-pointer flex flex-col max-sm:flex-row items-center"
                 >
-                  <div className="w-20 h-20 bg-gray-300 ring shadow-xl shadow-indigo-500/50 rounded-full flex items-center justify-center text-gray-600 overflow-hidden">
+                  <div className="max-sm:ml-[-8rem] w-20 max-sm:w-15 h-20 max-sm:h-15 bg-gray-300 ring shadow-xl shadow-indigo-500/50 rounded-full flex items-center justify-center text-gray-600 overflow-hidden">
                     {file ? (
                       <img
                         src={URL.createObjectURL(file)}
@@ -135,15 +135,16 @@ function Register() {
                     onChange={handleFileChange}
                     className="hidden"
                   />
-                  <span className="text-[#4169E1] font-bold underline mt-2">Upload Photo</span>
+                  <span className="max-sm:ml-6 text-[#4169E1] font-bold underline mt-2">Upload Photo</span>
                 </label>
               </div>
 
+              <div className="flex max-sm:flex-row items-center gap-x-4" >
               {/* Username */}
-              <div>
+              <div  >
                 <label
                   htmlFor="username"
-                  className="block ml-[8.1rem] text-sm font-medium text-white"
+                  className="block ml-[8.1rem] max-sm:ml-0 text-sm font-medium text-black max-sm:hidden "
                 >
                   Username
                 </label>
@@ -152,7 +153,7 @@ function Register() {
                   name="username"
                   type="text"
                   required
-                  className="appearance-none ml-[8.1rem] rounded-md relative block w-[60%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="appearance-none ml-[8.1rem] max-sm:ml-0 rounded-md relative block w-[60%] max-sm:w-[6.5rem] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Username"
                   value={username}
                   onChange={(e) => {
@@ -165,7 +166,7 @@ function Register() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block ml-[8.1rem] text-sm font-medium text-white"
+                  className="block max-sm:hidden ml-[0.5rem] max-sm:ml-0 text-sm font-medium text-black"
                 >
                   Email address
                 </label>
@@ -174,7 +175,7 @@ function Register() {
                   name="email"
                   type="email"
                   required
-                  className="appearance-none rounded-md ml-[8.1rem] relative block w-[60%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="appearance-none rounded-md ml-[0.5rem] max-sm:ml-[-0.7rem] relative block  w-[87%] max-sm:w-[7rem] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Email address"
                   value={email}
                   onChange={(e) => {
@@ -182,12 +183,12 @@ function Register() {
                   }}
                 />
               </div>
-
+              </div>
               {/* Password */}
               <div>
                 <label
                   htmlFor="password"
-                  className="block ml-[8.1rem] text-sm font-medium text-white"
+                  className="block max-sm:hidden ml-[8.1rem] text-sm font-medium text-black"
                 >
                   Password
                 </label>
@@ -196,7 +197,7 @@ function Register() {
                   name="password"
                   type="password"
                   required
-                  className="appearance-none rounded-md ml-[8.1rem] relative block w-[60%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="appearance-none rounded-md ml-[8.1rem] max-sm:ml-0 relative block w-[60%] max-sm:w-[107%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => {
@@ -209,7 +210,7 @@ function Register() {
               <div>
                 <label
                   htmlFor="confirmPassword"
-                  className="block ml-[8.1rem] text-sm font-medium text-white"
+                  className="block max-sm:hidden ml-[8.1rem] text-sm font-medium text-black"
                 >
                   Confirm Password
                 </label>
@@ -218,7 +219,7 @@ function Register() {
                   name="confirmPassword"
                   type="password"
                   required
-                  className="appearance-none rounded-md ml-[8.1rem] relative block w-[60%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="appearance-none rounded-md ml-[8.1rem] max-sm:ml-0 relative block w-[60%] max-sm:w-[107%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Confirm password"
                   value={confirmPassword}
                   onChange={(e) => {
@@ -231,12 +232,12 @@ function Register() {
             {/* Submit Button */}
             <div className="flex flex-col text-center" >
               <button
-                className="custom-class shadow-lg shadow-indigo-500/50 ml-[12.2rem] w-[40%]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2]  "
+                className="max-sm:mt-[-1rem] custom-class shadow-lg shadow-indigo-500/50 ml-[12.2rem] max-sm:ml-[3.5rem] w-[40%] max-sm:w-[50%]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] max-sm:text-[0.8rem] bg-[royalblue] hover:bg-[#385AC2]  "
               >
                 Register
               </button>
 
-              <Link to={'/login'} className=" text-xl mt-2 " > Already a User.? <span className=" text-[indigo] underline " >Login here.!</span>  </Link>
+              <Link to={'/login'} className=" text-xl max-sm:text-sm mt-2 " > Already a User.? <span className=" text-[indigo] underline " >Login here.!</span>  </Link>
             </div>
           </form>
         </div>

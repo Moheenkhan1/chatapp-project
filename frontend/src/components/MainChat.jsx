@@ -17,6 +17,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
   const [incomingMsg, setIncomingMsg] = useState("");
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
+  const [selectedMessage, setSelectedMessage] = useState(null);
 
   const [users, setUsers] = useState([]);
   const { setOnlineUsers } = useOnlineUsers();
@@ -245,6 +246,26 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
       console.error("Error deleting message:", error.response?.data || error.message);
     }
   };
+
+  // Click outside to hide delete button
+  useEffect(() => {
+    const handleClickOutside = () => {
+    setSelectedMessage(null);
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
+  const handleRightClick = (e, messageId) => {
+    e.preventDefault(); // Prevents the default context menu
+    setSelectedMessage(messageId);
+  };
+  
+  const handleDelete = (messageId) => {
+    deleteMessage(messageId);
+    setSelectedMessage(null);
+  };
   
   
 
@@ -301,6 +322,7 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
           <div
             key={index}
             className={`flex mb-2 ${msg.sender === currentUser._id ? "justify-end" : "justify-start"}`}
+            onContextMenu={(e) => handleRightClick(e, msg._id)}
           >
             {msg.message?.text && (
               <div
@@ -343,12 +365,12 @@ const MainChat = ({ selectedContact, currentUser, socket }) => {
             )}
 
             {/* Delete button */}
-            {msg.sender === currentUser._id && (
+            {msg.sender === currentUser._id && selectedMessage === msg._id && (
               <button
-                className="text-red-500 ml-2"
-                onClick={() => deleteMessage(msg._id)}
+               className="text-red-500 ml-2 "
+               onClick={() => handleDelete(msg._id)}
               >
-                Delete
+               Delete
               </button>
             )}
           </div>
