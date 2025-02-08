@@ -9,7 +9,7 @@ const { getContacts , authHome } = require('../controllers/home.controller.js');
 const router = express.Router();
 
 
-router.post('/auth',authMiddleware,authHome)
+router.post('/auth', authMiddleware, authHome);
 
 router.get('/contacts', authMiddleware, getContacts);
 

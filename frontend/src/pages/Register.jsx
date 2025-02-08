@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import Squares from "../components/SquaresBG";
-import StarBorder from "../components/StarBorderButton";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from 'react-router-dom'
@@ -9,6 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 import BlobCursor from '../components/Blobcursor'
 
 function Register() {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Access env variable
+
   const [file, setFile] = useState(null);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -20,6 +20,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // checks if password and confirm password in the form are same
     if (password !== confirmPassword) {
       toast.error("Passwords do not match!", {
         position: "top-center",
@@ -35,6 +36,7 @@ function Register() {
       return;
     }
 
+    // adds all the inputs to formdata
     const formData = new FormData();
     formData.append("username", username);
     formData.append("email", email);
@@ -43,7 +45,7 @@ function Register() {
 
     try{
       const response = await axios.post(
-        "http://localhost:5000/user/register",
+        `${API_BASE_URL}/user/register`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -51,6 +53,7 @@ function Register() {
         }
       );
   
+      // display successfull message and redirects to Login is registration is successfull
       if (response.status === 200) {
         toast.success('Register Successfull.! Login Now', {
           position: "top-center",
@@ -68,6 +71,7 @@ function Register() {
 
     }catch(error){
 
+      // if block to display any of the errors like users already exists etc
       if (
         error.response.status === 400 ||
         error.response.status === 401 ||
@@ -101,7 +105,7 @@ function Register() {
 
   return (
     <>
-      <div className="max-h-screen max-w-screen flex items-center justify-center bg-[#E8E8E8] overflow-hidden">
+      <div className="max-h-screen max-w-screen flex items-center justify-center bg-[#E8E8E8]">
       <BlobCursor className=' absolute inset-0 ' />
         <div className="w-[40%] max-sm:w-[75%] h:[50%] max-sm:h-[60%]  space-y-8 p-8 bg-[#FFFFFF] rounded-lg  z-10 shadow-[0_45px_45px_rgba(0,0,0,0.25)] absolute top-[10rem] max-sm:top-[7rem] ">
           <div className="flex items-center  ml-[10rem] max-sm:ml-0 max-sm:mt-[-1rem] " >

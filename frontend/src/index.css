@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+    overflow: hidden; /* Prevents both horizontal & vertical scrolling */
+    height: 100vh; /* Ensures full-page height */
+    width: 100vw;
+  }
+  

@@ -1,22 +1,26 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { FaCog } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import StarBorder from "../components/StarBorderButton";
 import { FaTimes } from 'react-icons/fa';
 import { useOnlineUsers } from '../Contexts/OnlineUsersContext';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import { UserDataContext } from '../Contexts/UserContext'
 
 const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , setShowChat , showChat }) => {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Access env variable
+
+
   const [search, setSearch] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [selectedContactId, setSelectedContactId] = useState(null);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null); 
+  const { user , setUser } = useContext(UserDataContext)
 
-  const { onlineUsers } = useOnlineUsers();
+  const { onlineUsers } = useOnlineUsers(useOnlineUsers);
 
   const navigate = useNavigate();
   const settingsRef = useRef(null); 
@@ -42,7 +46,7 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
     const fetchContacts = async () => {
       if (currentUser) {
         try {
-          const response = await axios.get("http://localhost:5000/home/contacts", {
+          const response = await axios.get(`${API_BASE_URL}/home/contacts`, {
             withCredentials: true,
           });
           setContacts(response.data.contacts);
@@ -65,10 +69,10 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/user/logout", {}, { withCredentials: true });
+      const response = await axios.post(`${API_BASE_URL}/user/logout`, {}, { withCredentials: true });
 
       if (response.status === 200) {
-        localStorage.removeItem("user");
+        setUser(null);
         setCurrentUser(null);
         toast.success('Logged Out Successfully.!', {
           position: "top-center",

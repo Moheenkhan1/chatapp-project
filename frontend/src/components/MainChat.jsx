@@ -4,7 +4,6 @@ import axios from "axios";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import StarBorder from "../components/StarBorderButton";
 import { BsEmojiSmile } from "react-icons/bs";  
 import EmojiPicker from "emoji-picker-react";
 import { useOnlineUsers } from '../Contexts/OnlineUsersContext';
@@ -12,6 +11,8 @@ import { MdCancel } from "react-icons/md";
 import { FiArrowLeft } from "react-icons/fi";
 
 const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showChat }) => {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Access env variable
+
   const scrollRef = useRef();
   const [messages, setMessages] = useState("");
   const [chat, setChat] = useState([]);
@@ -40,20 +41,10 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
       try {
         // Fetch messages
         const response = await axios.get(
-          `http://localhost:5000/messages/getMessages/${currentUser._id}/${selectedContact._id}`,
+          `${API_BASE_URL}/messages/getMessages/${currentUser._id}/${selectedContact._id}`,
           { withCredentials: true }
         );
         setChat(response.data);
-
-        // Mark messages as read
-  
-          // await axios.post(
-          //   "http://localhost:5000/api/mark-messages-read",
-          //   { senderId: selectedContact._id },
-          //   { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-          // );
-
-
       } catch (error) {
         console.error("Error fetching messages:", error.response?.data || error.message);
       }
@@ -82,7 +73,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
       });
 
       const response = await axios.post(
-        "http://localhost:5000/messages/addMessages",
+        `${API_BASE_URL}/messages/addMessages`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -224,7 +215,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
   const media = chat
     .filter((msg) => msg.message.fileType === "image" )
     .map((msg) => ({
-      src: `http://localhost:5000${msg.message.fileUrl}`,
+      src: `${API_BASE_URL}${msg.message.fileUrl}`,
       type: msg.message.fileType,
     }));
 
@@ -239,7 +230,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
   const deleteMessage = async (msgId) => {
     try {
       await axios.delete(
-        `http://localhost:5000/messages/deleteMessage/${msgId}/${currentUser._id}`,
+        `${API_BASE_URL}/messages/deleteMessage/${msgId}/${currentUser._id}`,
         { withCredentials: true } 
       );
       setChat((prev) => prev.filter((msg) => msg._id !== msgId));
@@ -272,7 +263,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
 
   if (!selectedContact || !currentUser) {
     return (
-      <div className="flex flex-col flex-1 bg-white text-black items-center justify-center">
+      <div className={`flex flex-col flex-1 bg-white text-black items-center justify-center ${showChat ? "max-sm:flex max-md:flex max-lg-flex max-xl-flex  max-[768px]:flex max-[1024px]:flex max-[912px]:flex max-[853px]:flex" : "max-sm:hidden max-md:hidden max-lg-hidden max-xl-hidden max-[768px]:hidden max-[1024px]:hidden max-[912px]:hidden max-[853px]:hidden"} `}>
         <h2 className="text-xl font-bold text-[#385AC2]  text-center">
           PLEASE SELECT A CONTACT TO START CHATTING
         </h2>

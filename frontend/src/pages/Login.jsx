@@ -1,6 +1,4 @@
 import React, { useState, useContext } from 'react';
-import Squares from '../components/SquaresBG';
-import StarBorder from '../components/StarBorderButton';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { UserDataContext } from '../Contexts/UserContext';
@@ -11,6 +9,9 @@ import BlobCursor from '../components/Blobcursor';
 
 
 function Login() {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Access env variable
+
+
   const navigate = useNavigate();
   const { setUser } = useContext(UserDataContext);
   const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ function Login() {
     password: '',
   });
 
+  // handles form with states
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -25,18 +27,20 @@ function Login() {
     });
   };
 
+  // handles the form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/user/login",
+        `${API_BASE_URL}/user/login`,
         formData,
         { withCredentials: true }
       );
       if (response.status === 200) {
         console.log("User authenticated:", response.data.user);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        // setUser(response.data.user);
+        
+        setUser(response.data.user);
+        
         toast.success('Login Successfull.!', {
           position: "top-center",
           autoClose: 5000,
@@ -48,7 +52,7 @@ function Login() {
           theme: "colored",
           transition: Bounce,
           });
-        navigate("/");
+        navigate("/"); // navigate to home page if response is right
       }
     } catch (error) {
       const mesg = error.response.data.message
@@ -67,7 +71,7 @@ function Login() {
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-[#E8E8E8] overflow-hidden">
+    <div className="h-screen w-screen flex items-center justify-center bg-[#E8E8E8]">
       <BlobCursor className=' absolute inset-0 ' />
       <div className="w-[30%] max-sm:w-[70%] h-[50%] max-sm:h-[45%] space-y-8 p-8 bg-[#FFFFFF] rounded-lg  z-10 shadow-[0_45px_45px_rgba(0,0,0,0.25)] absolute ">
       <div className="flex items-center  ml-[6.5rem] max-sm:ml-0 max-sm:mt-[-1.5rem]  " >
@@ -112,7 +116,7 @@ function Login() {
                 Login
               </button>
 
-              <Link to={'/login'} className=" text-xl max-sm:text-sm mt-5 max-sm:mt-3 " > New here.? <span className=" text-[indigo] underline " >Register here.!</span>  </Link>
+              <Link to={'/register'} className=" text-xl max-sm:text-sm mt-5 max-sm:mt-3 " > New here.? <span className=" text-[indigo] underline " >Register here.!</span>  </Link>
             </div>
 
         </form>

@@ -6,6 +6,8 @@ const UserContext = ({children})=>{
 
     const [user, setUser] = useState({})
 
+    console.log("auth user testing",user)
+
     return (
         <UserDataContext.Provider value={{user,setUser}}>
             {children}
