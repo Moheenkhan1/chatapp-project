@@ -5,36 +5,36 @@ const User = require('../models/user.js');
 const authMiddleware = require('../middleware/authMiddleware.js')
 const multer = require("multer");
 const path = require("path");
+const upload = require("../config/multer.js"); // Import Cloudinary Multer config
 
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "profilePic/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "profilePic/");
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, Date.now() + path.extname(file.originalname));
+//   },
+// });
 
-const profilePic = multer({ storage: storage });
+// const profilePic = multer({ storage: storage });
 
 
-module.exports.registerUser = async (req,res)=>{
-    const { username, email, password } = req.body;
-    let fileUrl = null;
-    let fileType = null;
-    if (req.file) {
-      fileUrl = `/profilePic/${req.file.filename}`;
-      fileType = req.file.mimetype.split("/")[0];
-    }
-    console.log(req.file)
+module.exports.registerUser = async (req, res) => {
+  console.log("🔵 Incoming Registration Request:", req.body);
+  console.log("📂 File Received:", req.file);
+
+  const { username, email, password } = req.body;
+  const profilePicture = req.file ? req.file.path : null; // Get Cloudinary URL
+
   if (!username || !email || !password) {
-    return res.status(400).json({ message: 'Username, email, and password are required' });
+    return res.status(400).json({ message: "Username, email, and password are required" });
   }
+
   try {
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists with this username or email' });
+      return res.status(400).json({ message: "User already exists with this username or email" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -44,19 +44,16 @@ module.exports.registerUser = async (req,res)=>{
       username,
       email,
       password: hashedPassword,
-      avatar: {
-        fileUrl:fileUrl, fileType:fileType 
-      },
+      profilePicture,
     });
 
     await newUser.save();
-
-    res.status(200).json({ message: "User successfully registered", newUser });
+    return res.status(200).json({ message: "User successfully registered", newUser });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error("❌ Error registering user:", error);
+    return res.status(500).json({ message: "Server Error" });
   }
-}
+};
 
 module.exports.loginUser = async (req,res)=>{
         const { username, password } = req.body;

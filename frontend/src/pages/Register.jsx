@@ -41,7 +41,7 @@ function Register() {
     formData.append("username", username);
     formData.append("email", email);
     formData.append("password", password);
-    if (file) formData.append("file", file);
+    if (file) formData.append("profilePicture", file);
 
     try{
       const response = await axios.post(
@@ -52,6 +52,7 @@ function Register() {
           withCredentials: true,
         }
       );
+      console.log("✅ Registration Response:", response.data);
   
       // display successfull message and redirects to Login is registration is successfull
       if (response.status === 200) {

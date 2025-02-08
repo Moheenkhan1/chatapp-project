@@ -53,6 +53,11 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
     fetchMessages();
   }, [currentUser, selectedContact,chat]);
 
+  useEffect(() => {
+    console.log("✅ Updated File State:", file); // Now it will show the correct value
+  }, [file]);
+  
+
   // Handle sending messages
   const sendChat = async (e) => {
     e.preventDefault();
@@ -187,7 +192,10 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
 // Handle file selection 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
+    console.log('sekk',selectedFile)
     setFile(selectedFile);
+
+    console.log('bvuvhv',file)
 
     if (selectedFile) {
       const fileType = selectedFile.type.split("/")[0];
@@ -286,7 +294,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
         <div className="flex justify start gap-3 max-sm:ml-[1rem] max-md:ml-[1rem] max-lg:ml-[1rem] max-xl:ml-[1rem]">
           <img
             className="w-[3.5rem] h-[3.5rem] rounded-full object-cover ml-6 max-sm:ml-0 max-md:ml-0 max-lg:ml-0 max-xl:ml-0 ring "
-            src={`http://localhost:5000${selectedContact.avatar.fileUrl}`}
+            src={selectedContact.profilePicture}
             alt="Profile"
           />
           <div className=" ml-4 max-sm:ml-2 max-md:ml-2 max-lg:ml-2 max-xl:ml-2" >
@@ -334,18 +342,18 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
               {msg.message.fileType === "image" && (
   <img
     className="max-w-xs max-sm:w-full max-md:w-full max-lg:w-full max-xl:w-full rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
-    src={`http://localhost:5000${msg.message.fileUrl}`}
+    src={msg.message.fileUrl}
     alt="Shared"
-    onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`, 'image')}
+    onClick={() => handleMediaClick(msg.message.fileUrl, 'image')}
   />
 )}
 {/* Video File */}
 {msg.message.fileType === "video" && (
   <video
     className="max-w-xs max-sm:w-full max-md:w-full max-lg:w-full max-xl:w-full rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
-    src={`http://localhost:5000${msg.message.fileUrl}`}
+    src={msg.message.fileUrl}
     controls
-    onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`, 'video')}
+    onClick={() => handleMediaClick(msg.message.fileUrl, 'video')}
   />
 )}
 
@@ -353,7 +361,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
                   <audio
                     className="max-w-xs rounded-lg cursor-pointer"
                     controls
-                    src={`http://localhost:5000${msg.message.fileUrl}`}
+                    src={msg.message.fileUrl}
                   />
                 )}
               </div>
