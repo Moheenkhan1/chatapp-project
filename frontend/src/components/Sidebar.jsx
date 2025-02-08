@@ -134,9 +134,9 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
             <div className="relative">
               <img
                 className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
-                src={`http://localhost:5000${contact.avatar.fileUrl}`}
+                src={contact.profilePicture}
                 alt="profile"
-                onClick={(e) => handlePhotoClick(`http://localhost:5000${contact.avatar.fileUrl}`, e)}
+                onClick={(e) => handlePhotoClick(contact.profilePicture, e)}
               />
               {/* Online Status Indicator */}
               {onlineUsers.some(user => user._id === contact._id && user.isOnline) && (
@@ -167,7 +167,7 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
           <div className="flex items-center space-x-4 mb-8 mt-5 ml-[7rem]">
             <img
               className="w-12 h-12 rounded-full object-cover ring"
-              src={`http://localhost:5000${currentUser.avatar.fileUrl}`}
+              src={currentUser.profilePicture}
               alt="Profile"
             />
             <h3 className="text-xl text-[#385AC2] font-bold">{currentUser.username}</h3>

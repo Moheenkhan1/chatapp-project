@@ -3,18 +3,19 @@ const mongoose = require("mongoose");
 const Message = require("../models/messages.model");
 const multer = require("multer");
 const path = require("path");
+const upload = require("../config/multer"); // Cloudinary Multer config
 
 // Configure Multer Storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "uploads/");
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, Date.now() + path.extname(file.originalname));
+//   },
+// });
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
 // Fetch messages between sender and receiver
 module.exports.getMessages = async (req, res) => {
@@ -40,20 +41,20 @@ module.exports.getMessages = async (req, res) => {
 
 // Add a new message
 module.exports.addMessage = async (req, res) => {
-  console.log("Received Body:", req.body);
-  console.log("Received File:", req.file);
+  console.log("📤 Received Chat Message:", req.body);
+  console.log("📂 File Received:", req.file);
 
   const { from, to, message } = req.body;
 
   if (!from || !to || (!message && !req.file)) {
-    return res.status(400).send("Sender, receiver, and message or file are required");
+    return res.status(400).json({ message: "Sender, receiver, and message or file are required" });
   }
 
   let fileUrl = null;
   let fileType = null;
 
   if (req.file) {
-    fileUrl = `/uploads/${req.file.filename}`;
+    fileUrl = req.file.path ; // Cloudinary file URL
     fileType = req.file.mimetype.split("/")[0];
   }
 
@@ -65,10 +66,10 @@ module.exports.addMessage = async (req, res) => {
       receiver: to,
     });
 
-    res.status(200).json(newMessage);
+    return res.status(200).json(newMessage);
   } catch (error) {
-    console.error("Error saving message:", error);
-    res.status(500).send("Error saving message");
+    console.error("❌ Error saving message:", error);
+    return res.status(500).json({ message: "Error saving message" });
   }
 };
 
