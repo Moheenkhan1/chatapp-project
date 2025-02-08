@@ -102,7 +102,8 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
   };
 
   return (
-    <div className={`relative w-1/4 max-sm:w-full bg-white p-5 shadow-md text-white overflow-auto ${showChat ? "max-sm:hidden" : "max-sm:flex max-sm:flex-col"}`}>
+    <div className={`relative w-1/4 max-md:w-full max-sm:w-full max-lg:w-full max-xl:w-full max-[768px]:w-full max-[1024px]:w-full max-[912px]:w-full max-[853px]:w-full bg-white p-5 shadow-md text-white overflow-auto ${showChat ? "max-md:hidden max-sm:hidden max-lg:hidden max-xl:hidden max-[768px]:hidden max-[1024px]:hidden max-[912px]:hidden max-[853px]:hidden" : "max-md:flex max-md:flex-col max-sm:flex max-sm:flex-col max-lg:flex max-lg:flex-col max-xl:flex max-xl:flex-col max-[768px]:flex max-[768px]:flex-col max-[1024px]:flex max-[1024px]:flex-col max-[912px]:flex max-[912px]:flex-col max-[853px]:flex max-[853px]:flex-col"}`}>
+
       <h2 className="text-[1.7rem] text-[#4169E1] font-extrabold mb-4">Chats</h2>
       
       {/* Search Bar */}
@@ -156,7 +157,7 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
       {settingsOpen && currentUser && (
         <div
           ref={settingsRef} // Attach the ref to this div
-          className="fixed bottom-0 w-[24%] left-0 p-6 shadow-2xl rounded-tl-lg transition-transform duration-700 ease-out transform bg-[#E8E8E8] opacity-100 shadow-[60px_0_55px_45px_rgba(0,0,0,0.25)]"
+          className="fixed bottom-0 w-[24%] left-0 p-6 rounded-tl-lg transition-transform duration-700 ease-out transform bg-[#E8E8E8] opacity-100 shadow-[60px_0_55px_45px_rgba(0,0,0,0.25)]"
         >
           {/* <h3 className="text-lg text-cyan-400 font-bold mb-4">{currentUser.username}</h3> */}
           <div className="flex items-center space-x-4 mb-8 mt-5 ml-[7rem]">

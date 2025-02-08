@@ -286,19 +286,19 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
   
 
   return (
-    <div className={`flex flex-col flex-1 bg-white ${showChat ? "max-sm:flex" : "max-sm:hidden"}`}>
+    <div className={`flex flex-col flex-1 bg-white ${showChat ? "max-sm:flex max-md:flex max-lg-flex max-xl-flex  max-[768px]:flex max-[1024px]:flex max-[912px]:flex max-[853px]:flex" : "max-sm:hidden max-md:hidden max-lg-hidden max-xl-hidden max-[768px]:hidden max-[1024px]:hidden max-[912px]:hidden max-[853px]:hidden"}`}>
       {/* Chat Header with Profile Picture */}
       <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex  items-center">
-      <button className="max-sm:block hidden text-white text-xl mr-3" onClick={() => setShowChat(false)}>
+      <button className="max-sm:block max-md:block max-lg-block max-xl-block max-[768px]:block max-[1024px]:block max-[912px]:block max-[853px]:bloc  hidden text-white text-xl mr-3" onClick={() => setShowChat(false)}>
           <FiArrowLeft size={24} />
         </button>
-        <div className="flex justify start gap-3 max-sm:ml-[1rem] ">
+        <div className="flex justify start gap-3 max-sm:ml-[1rem] max-md:ml-[1rem] max-lg:ml-[1rem] max-xl:ml-[1rem]">
           <img
-            className="w-[3.5rem] h-[3.5rem] rounded-full object-cover ml-6 max-sm:ml-0 ring "
+            className="w-[3.5rem] h-[3.5rem] rounded-full object-cover ml-6 max-sm:ml-0 max-md:ml-0 max-lg:ml-0 max-xl:ml-0 ring "
             src={`http://localhost:5000${selectedContact.avatar.fileUrl}`}
             alt="Profile"
           />
-          <div className=" ml-4 max-sm:ml-2 " >
+          <div className=" ml-4 max-sm:ml-2 max-md:ml-2 max-lg:ml-2 max-xl:ml-2" >
 
           <h2 className="text-[1.2rem] font-bold text-white">{selectedContact.username}</h2>
           <span
@@ -339,10 +339,10 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
             )}
 
             {msg.message.fileUrl !== null && msg.message.fileUrl && (
-              <div className="mt-2 max-sm:w-[40%] ">
+              <div className="mt-2 max-sm:w-[40%] max-md:w-[40%] max-lg:w-[40%] max-xl:w-[40%] ">
               {msg.message.fileType === "image" && (
   <img
-    className="max-w-xs max-sm:w-full rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
+    className="max-w-xs max-sm:w-full max-md:w-full max-lg:w-full max-xl:w-full rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
     src={`http://localhost:5000${msg.message.fileUrl}`}
     alt="Shared"
     onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`, 'image')}
@@ -351,7 +351,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
 {/* Video File */}
 {msg.message.fileType === "video" && (
   <video
-    className="max-w-xs max-sm:w-full rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
+    className="max-w-xs max-sm:w-full max-md:w-full max-lg:w-full max-xl:w-full rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
     src={`http://localhost:5000${msg.message.fileUrl}`}
     controls
     onClick={() => handleMediaClick(`http://localhost:5000${msg.message.fileUrl}`, 'video')}
