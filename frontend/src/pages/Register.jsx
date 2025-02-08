@@ -107,12 +107,13 @@ function Register() {
     <>
       <div className="max-h-screen max-w-screen flex items-center justify-center bg-[#E8E8E8]">
       <BlobCursor className=' absolute inset-0 ' />
-        <div className="w-[40%] max-sm:w-[75%] h:[50%] max-sm:h-[60%]  space-y-8 p-8 bg-[#FFFFFF] rounded-lg  z-10 shadow-[0_45px_45px_rgba(0,0,0,0.25)] absolute top-[10rem] max-sm:top-[7rem] ">
+        <div className="w-[40%] md:w-[50%] lg:w-[40%] max-sm:w-[75%] h-[70%] md:h-[70%] max-sm:h-[80%] space-y-8 p-8 bg-[#FFFFFF] rounded-lg z-10 shadow-[0_45px_45px_rgba(0,0,0,0.25)] absolute top-[8rem] max-sm:top-[5rem] ">
           <div className="flex items-center  ml-[10rem] max-sm:ml-0 max-sm:mt-[-1rem] " >
             <div className="pulse animate-pulseCustom mt-3 max-sm:mt-1 h-[2rem] max-sm:h-[1.5rem] w-[2rem] max-sm:w-[1.5rem] rounded-full bg-[#4169E1] "></div>
-            <h2 className="mt-3 max-sm:mt-1 ml-[1.5rem] max-sm:ml-[0.8rem] text-3xl max-sm:text-xl font-extrabold text-[#4169E1]">
-              Chat App Project
+            <h2 className="mt-3 ml-auto max-sm:mt-1 max-sm:ml-0 text-3xl sm:text-sm md:text-xl md:ml-[-7rem] max-lg:ml-[-12rem] lg:ml-[2rem] font-extrabold text-[#4169E1] whitespace-nowrap text-left">
+                  Chat App Project
             </h2>
+
           </div>
           <form className="mt-8 max-sm:mt-2 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm space-y-4">
@@ -148,7 +149,7 @@ function Register() {
               <div  >
                 <label
                   htmlFor="username"
-                  className="block ml-[8.1rem] max-sm:ml-0 text-sm font-medium text-black max-sm:hidden "
+                  className="block ml-[8.1rem] max-sm:ml-0 md:ml-0 max-lg:ml-0 text-sm font-medium text-black max-sm:hidden "
                 >
                   Username
                 </label>
@@ -157,7 +158,7 @@ function Register() {
                   name="username"
                   type="text"
                   required
-                  className="appearance-none ml-[8.1rem] max-sm:ml-0 rounded-md relative block w-[60%] max-sm:w-[6.5rem] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="appearance-none ml-[8.1rem] max-sm:ml-0 md:ml-0 max-lg:ml-0 rounded-md relative block  sm:w-[6.5rem] md:w-[8rem] lg:w-[16rem] max-lg:w-[90%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Username"
                   value={username}
                   onChange={(e) => {
@@ -170,7 +171,7 @@ function Register() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block max-sm:hidden ml-[0.5rem] max-sm:ml-0 text-sm font-medium text-black"
+                  className="block max-sm:hidden ml-[0.5rem] max-sm:ml-0 max-lg:ml-0 text-sm font-medium text-black"
                 >
                   Email address
                 </label>
@@ -179,7 +180,7 @@ function Register() {
                   name="email"
                   type="email"
                   required
-                  className="appearance-none rounded-md ml-[0.5rem] max-sm:ml-[-0.7rem] relative block  w-[87%] max-sm:w-[7rem] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="appearance-none rounded-md ml-[0.5rem] max-sm:ml-[-0.7rem]  relative block  lg:w-[22rem] max-sm:w-[7rem] md:w-[10.5rem] max-lg:w-[6rem] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Email address"
                   value={email}
                   onChange={(e) => {
@@ -192,7 +193,7 @@ function Register() {
               <div>
                 <label
                   htmlFor="password"
-                  className="block max-sm:hidden ml-[8.1rem] text-sm font-medium text-black"
+                  className="block max-sm:hidden ml-[8.1rem] md:ml-1 max-lg:ml-0 text-sm font-medium text-black"
                 >
                   Password
                 </label>
@@ -201,7 +202,7 @@ function Register() {
                   name="password"
                   type="password"
                   required
-                  className="appearance-none rounded-md ml-[8.1rem] max-sm:ml-0 relative block w-[60%] max-sm:w-[107%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="appearance-none rounded-md ml-[8.1rem] max-sm:ml-0 md:ml-0 max-lg:ml-0 relative block w-[60%] max-sm:w-[107%] md:w-[100%] max-lg:w-[100%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => {
@@ -214,7 +215,7 @@ function Register() {
               <div>
                 <label
                   htmlFor="confirmPassword"
-                  className="block max-sm:hidden ml-[8.1rem] text-sm font-medium text-black"
+                  className="block max-sm:hidden ml-[8.1rem] md:ml-1 max-lg:ml-0 text-sm font-medium text-black"
                 >
                   Confirm Password
                 </label>
@@ -223,7 +224,7 @@ function Register() {
                   name="confirmPassword"
                   type="password"
                   required
-                  className="appearance-none rounded-md ml-[8.1rem] max-sm:ml-0 relative block w-[60%] max-sm:w-[107%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="appearance-none rounded-md ml-[8.1rem] max-sm:ml-0 md:ml-0 max-lg:ml-0 relative block w-[60%] max-sm:w-[107%] md:w-[100%] max-lg:w-[100%] px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Confirm password"
                   value={confirmPassword}
                   onChange={(e) => {
@@ -235,11 +236,11 @@ function Register() {
 
             {/* Submit Button */}
             <div className="flex flex-col text-center" >
-              <button
-                className="max-sm:mt-[-1rem] custom-class shadow-lg shadow-indigo-500/50 ml-[12.2rem] max-sm:ml-[3.5rem] w-[40%] max-sm:w-[50%]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] max-sm:text-[0.8rem] bg-[royalblue] hover:bg-[#385AC2]  "
-              >
-                Register
-              </button>
+            <button
+                 className="max-sm:mt-[-1rem] custom-class shadow-lg shadow-indigo-500/50 ml-[10.2rem] max-sm:ml-[3.5rem] md:ml-[6rem] lg:ml-[11rem] max-lg:ml-[3rem] max-lg:w-[60%] w-[40%] max-sm:w-[50%] p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] max-sm:text-[0.8rem] bg-[royalblue] hover:bg-[#385AC2]">
+             Register
+             </button>
+
 
               <Link to={'/login'} className=" text-xl max-sm:text-sm mt-2 " > Already a User.? <span className=" text-[indigo] underline " >Login here.!</span>  </Link>
             </div>
