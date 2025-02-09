@@ -30,6 +30,9 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); 
+
+
+  
   
 
 
@@ -287,13 +290,13 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
   return (
     <div className={`flex flex-col flex-1 bg-white ${showChat ? "max-sm:flex max-md:flex max-lg-flex max-xl-flex  max-[768px]:flex max-[1024px]:flex max-[912px]:flex max-[853px]:flex" : "max-sm:hidden max-md:hidden max-lg-hidden max-xl-hidden max-[768px]:hidden max-[1024px]:hidden max-[912px]:hidden max-[853px]:hidden"}`}>
       {/* Chat Header with Profile Picture */}
-      <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex  items-center">
-      <button className="max-sm:block max-md:block max-lg-block max-xl-block max-[768px]:block max-[1024px]:block max-[912px]:block max-[853px]:bloc  hidden text-white text-xl mr-3" onClick={() => setShowChat(false)}>
+      <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex items-center ">
+      <button className="max-sm:block max-md:block max-lg-block max-xl-block max-[768px]:block max-[1024px]:block max-[912px]:block max-[853px]:block  hidden text-white text-xl mr-3" onClick={() => setShowChat(false)}>
           <FiArrowLeft size={24} />
         </button>
-        <div className="flex justify start gap-3 max-sm:ml-[1rem] max-md:ml-[1rem] max-lg:ml-[1rem] max-xl:ml-[1rem]">
+        <div className="flex justify start gap-3 max-sm:ml-[1rem] max-md:ml-[1rem] max-lg:ml-[1rem] max-xl:ml-[1rem] max-sm:fixed max-md:fixed max-lg:fixed">
           <img
-            className="w-[3.5rem] h-[3.5rem] rounded-full object-cover ml-6 max-sm:ml-0 max-md:ml-0 max-lg:ml-0 max-xl:ml-0 ring "
+            className="w-[3.5rem] h-[3.5rem] rounded-full object-cover ml-6 max-sm:ml-4 max-md:ml-0 max-xl:ml-0 ring max-sm:h-[3rem] max-sm:w-[3rem] max-sm:mt-0.5 md:h-[3rem] md:w-[3rem] md:mt-0.9 md:ml-[1rem] max-lg:h-[3rem] max-lg:w-[3rem] "
             src={selectedContact.profilePicture}
             alt="Profile"
           />
@@ -323,49 +326,64 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
       <div className="flex-1 p-4 overflow-y-auto bg-white text-black">
         {chat.map((msg, index) => (
           <div
-            key={index}
-            className={`flex mb-2 ${msg.sender === currentUser._id ? "justify-end" : "justify-start"}`}
-            onContextMenu={(e) => handleRightClick(e, msg._id)}
-          >
-            {msg.message?.text && (
-              <div
-                className={`p-3 rounded-lg max-w-xs ${
-                  msg.sender === currentUser._id ? "bg-[#4169E1] text-white" : "bg-gray-700 text-white"
-                }`}
-              >
-                <p>{msg.message.text}</p>
-              </div>
-            )}
+          key={index}
+          className={`flex mb-2 ${msg.sender === currentUser._id ? "justify-end" : "justify-start"}`}
+          onContextMenu={(e) => handleRightClick(e, msg._id)}
+        >
 
             {msg.message.fileUrl !== null && msg.message.fileUrl && (
-              <div className="mt-2 max-sm:w-[40%] max-md:w-[40%] max-lg:w-[40%] max-xl:w-[40%] ">
-              {msg.message.fileType === "image" && (
-  <img
-    className="max-w-xs max-sm:w-full max-md:w-full max-lg:w-full max-xl:w-full rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
-    src={msg.message.fileUrl}
-    alt="Shared"
-    onClick={() => handleMediaClick(msg.message.fileUrl, 'image')}
-  />
-)}
-{/* Video File */}
-{msg.message.fileType === "video" && (
-  <video
-    className="max-w-xs max-sm:w-full max-md:w-full max-lg:w-full max-xl:w-full rounded-lg cursor-pointer bg-[#4169E1] p-1 shadow-md block"
-    src={msg.message.fileUrl}
-    controls
-    onClick={() => handleMediaClick(msg.message.fileUrl, 'video')}
-  />
-)}
-
-                {msg.message.fileType === "audio" && (
-                  <audio
-                    className="max-w-xs rounded-lg cursor-pointer"
-                    controls
-                    src={msg.message.fileUrl}
-                  />
-                )}
-              </div>
+              <div className="mt-2 max-sm:w-[40%] max-md:w-[40%] max-lg:w-[40%] max-xl:w-[40%]  ">
+               <div
+            className={`rounded-lg p-0.5 bg-[#4169E1] shadow-md flex flex-col items-center`} 
+          >
+            {/* Image File */}
+            {msg.message.fileType === "image" && (
+              <img
+                className="max-w-xs max-sm:w-full max-md:w-full max-lg:w-full max-xl:w-full rounded-lg cursor-pointer"
+                src={msg.message.fileUrl}
+                alt="Shared"
+                onClick={() => handleMediaClick(msg.message.fileUrl, "image")}
+              />
             )}
+
+            {/* Video File */}
+            {msg.message.fileType === "video" && (
+              <video
+                className="max-w-xs max-sm:w-full max-md:w-full max-lg:w-full max-xl:w-full rounded-lg cursor-pointer"
+                src={msg.message.fileUrl}
+                controls
+                onClick={() => handleMediaClick(msg.message.fileUrl, "video")}
+              />
+            )}
+
+            {/* Audio File */}
+            {msg.message.fileType === "audio" && (
+              <audio
+                className="max-w-xs rounded-lg cursor-pointer"
+                controls
+                src={msg.message.fileUrl}
+              />
+            )}
+
+            {/* Text Below Media */}
+            {msg.message?.text && <p className="mt-1 mb-1 text-white">{msg.message.text}</p>} {/* Text is now below the media, with white text on a blue background */}
+          </div>
+        </div>
+      )}
+
+      {/* Text Only Messages */}
+      {msg.message?.text && !msg.message.fileUrl && (
+        <div
+          className={`p-3 rounded-lg max-w-xs ${
+            msg.sender === currentUser._id ? "bg-[#4169E1] text-white" : "bg-gray-700 text-white"
+          }`}
+        >
+          <p>{msg.message.text}</p>
+        </div>
+      )}
+
+
+            
 
             {/* Delete button */}
             {msg.sender === currentUser._id && selectedMessage === msg._id && (
@@ -380,41 +398,45 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
         ))}
         <div ref={scrollRef} />
       </div>
-      <Lightbox
-  open={isLightboxOpen}
-  close={() => setIsLightboxOpen(false)}
-  slides={lightboxMedia.map((media) => ({
-    src: media.src,
-    type: media.type === "video" ? "video" : "image", // Ensure that type is passed as either 'image' or 'video'
-  }))}
-  currentIndex={currentMediaIndex}
-  plugins={[Zoom]}
-/>
+              <Lightbox
+          open={isLightboxOpen}
+          close={() => setIsLightboxOpen(false)}
+          slides={lightboxMedia.map((media) => ({
+            src: media.src,
+            type: media.type === "video" ? "video" : "image", // Ensure that type is passed as either 'image' or 'video'
+          }))}
+          currentIndex={currentMediaIndex}
+          plugins={[Zoom]}
+        />
 
 
         {/* File Preview Section */}
-        {filePreview && (
-        <div className="p-3 bg-white border-t border-gray-700 flex items-center gap-2">
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex gap-2">
-                <div className="max-w-xs">
-                  {/* Centering the image in the preview */}
-                  <div className="flex justify-center">
-                    {filePreview}
+                {filePreview && (
+          <div className="p-3 bg-white border-t border-gray-700 flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full">
+              <div className="flex items-center justify-between w-full">
+                <div className="flex gap-2">
+                  <div className="max-w-xs w-full">
+                    {/* Centering the image in the preview */}
+                    <div className="flex justify-center">
+                      {/* Responsive size adjustments */}
+                      <div className="max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+                        {filePreview}
+                      </div>
+                    </div>
                   </div>
+                  <button
+                    onClick={removeFile}
+                    className="text-red-500 text-xl"
+                  >
+                    <MdCancel />
+                  </button>
                 </div>
-                <button
-                  onClick={removeFile}
-                  className="text-red-500 text-xl"
-                >
-                  <MdCancel />
-                </button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>  
+        )}
+
 
       {/* Message Input */}
       <form onSubmit={sendChat} className="bg-[#E8E8E8] border-t-2 border-[#4169E1] p-4 flex items-center">

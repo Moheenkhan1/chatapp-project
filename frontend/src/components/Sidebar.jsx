@@ -108,19 +108,19 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
   return (
     <div className={`relative w-1/4 max-md:w-full max-sm:w-full max-lg:w-full max-xl:w-full max-[768px]:w-full max-[1024px]:w-full max-[912px]:w-full max-[853px]:w-full bg-white p-5 shadow-md text-white overflow-auto ${showChat ? "max-md:hidden max-sm:hidden max-lg:hidden max-xl:hidden max-[768px]:hidden max-[1024px]:hidden max-[912px]:hidden max-[853px]:hidden" : "max-md:flex max-md:flex-col max-sm:flex max-sm:flex-col max-lg:flex max-lg:flex-col max-xl:flex max-xl:flex-col max-[768px]:flex max-[768px]:flex-col max-[1024px]:flex max-[1024px]:flex-col max-[912px]:flex max-[912px]:flex-col max-[853px]:flex max-[853px]:flex-col"}`}>
 
+<div className="fixed top-0 left-0 w-1/4 max-md:w-full bg-white p-5 shadow-md z-10">
       <h2 className="text-[1.7rem] text-[#4169E1] font-extrabold mb-4">Chats</h2>
-      
-      {/* Search Bar */}
       <input
         type="text"
         placeholder="Search chats..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full p-2 mb-4 bg-[#E8E8E8] text-black border border-gray-700 rounded-lg placeholder-black focus:outline-none focus:ring focus:ring-indigo-500"
+        className="w-full p-2 bg-[#E8E8E8] text-black border border-gray-700 rounded-lg placeholder-black focus:outline-none focus:ring focus:ring-indigo-500"
       />
+    </div>
 
       {/* Contacts List */}
-      <ul>
+      <ul className="mt-[120px] overflow-auto">
         {filteredContacts.map((contact) => (
           <li
             key={contact._id}
@@ -161,10 +161,10 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
       {settingsOpen && currentUser && (
         <div
           ref={settingsRef} // Attach the ref to this div
-          className="fixed bottom-0 w-[24%] left-0 p-6 rounded-tl-lg transition-transform duration-700 ease-out transform bg-[#E8E8E8] opacity-100 shadow-[60px_0_55px_45px_rgba(0,0,0,0.25)]"
+          className="fixed bottom-0 w-[24%] left-0 p-6 rounded-tl-lg transition-transform duration-700 ease-out transform bg-[#E8E8E8] opacity-100 shadow-[60px_0_55px_45px_rgba(0,0,0,0.25)] max-md:w-[100%] max-lg:w-[100%]"
         >
           {/* <h3 className="text-lg text-cyan-400 font-bold mb-4">{currentUser.username}</h3> */}
-          <div className="flex items-center space-x-4 mb-8 mt-5 ml-[7rem]">
+          <div className="flex items-center space-x-4">
             <img
               className="w-12 h-12 rounded-full object-cover ring"
               src={currentUser.profilePicture}
@@ -172,16 +172,11 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
             />
             <h3 className="text-xl text-[#385AC2] font-bold">{currentUser.username}</h3>
           </div>
-          <button
-                className="custom-class w-[60%] shadow-lg shadow-indigo-500/50 m-4 ml-[4.6rem]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2]  "
-              >
-                Change Password
-              </button>
               <button
-                className="custom-class w-[60%] shadow-lg shadow-indigo-500/50 m-4 ml-[4.6rem]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2]  "
+                className="custom-class w-[40%] shadow-lg shadow-indigo-500/50 mt-6 p-[10px] rounded-[10px] text-[white] text-[1.2rem] bg-[royalblue] hover:bg-[red]"
                 onClick={handleLogout}
               >
-                LogOut
+                Logout
               </button>
         </div>
       )}
