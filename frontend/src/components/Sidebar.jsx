@@ -120,7 +120,7 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
     </div>
 
       {/* Contacts List */}
-      <ul className="mt-[1/4] max-sm:mt-[39%] overflow-auto">
+      <ul className="mt-[1/4] max-sm:mt-[40%] overflow-auto">
         {filteredContacts.map((contact) => (
           <li
             key={contact._id}
