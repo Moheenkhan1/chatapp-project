@@ -324,10 +324,10 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
           />
           <div className="flex gap-4 ml-4 max-md:ml-2 max-lg:ml-2 max-xl:ml-2" >
 
-          <h2 className="text-[1.2rem] font-bold text-white max-sm:fixed max-sm:ml-[4rem] max-sm:mt-[-0.7rem] max-md:ml-[4rem] max-md:mt-[-0.7rem] max-lg:ml-[4rem] max-lg:mt-[-0.7rem] max-xl:ml-[4rem] max-xl:mt-[-0.7rem] max-md:fixed max-lg:fixed max-xl:fixed ">{selectedContact.username}</h2>
+          <h2 className="text-[1.2rem] font-bold text-white max-sm:ml-[4rem] max-sm:mt-[-0.7rem] max-md:ml-[4rem] max-md:mt-[-0.7rem] max-lg:ml-[4rem] max-lg:mt-[-0.7rem] max-xl:ml-[4rem] max-xl:mt-[-0.7rem] max-md:fixed max-lg:fixed max-xl:fixed ">{selectedContact.username}</h2>
           <span
               className={`max-sm:ml-[4rem] max-md:ml-[4rem] max-lg:ml-[4rem] max-xl:ml-[4rem] 
-                sm:mt-[1rem] md:mt-10 lg:mt-10 xl:mt-10
+                
                 ${users.some((user) => user._id === selectedContact._id && user.isOnline)
                   ? "text-green-500"
                   : "text-red-500"
