@@ -40,7 +40,6 @@ chatapp-project-main/
 │   ├── models/            # Database models
 │   ├── config/            # Configuration files
 │   ├── middleware/        # Authentication and other middleware
-│   ├── utils/             # Helper functions
 │   ├── .env.example       # Environment variables example
 │   ├── package.json       # Backend dependencies
 │── frontend/              # Client-side code (React, Tailwind CSS)
@@ -48,7 +47,6 @@ chatapp-project-main/
 │   │   ├── pages/         # Main pages (Home, Login, Register)
 │   │   ├── components/    # Reusable components (Sidebar, MainChat)
 │   │   ├── context/       # Global state management
-│   │   ├── utils/         # Helper functions
 │   ├── public/            # Static assets
 │   ├── .env.example       # Environment variables example
 │   ├── package.json       # Frontend dependencies
