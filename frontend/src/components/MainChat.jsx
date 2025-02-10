@@ -327,7 +327,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
           <h2 className="text-[1.2rem] font-bold text-white max-sm:fixed max-sm:ml-[4rem] max-sm:mt-[-0.7rem] max-md:ml-[4rem] max-md:mt-[-0.7rem] max-lg:ml-[4rem] max-lg:mt-[-0.7rem] max-xl:ml-[4rem] max-xl:mt-[-0.7rem] max-md:fixed max-lg:fixed max-xl:fixed ">{selectedContact.username}</h2>
           <span
               className={`max-sm:ml-[4rem] max-md:ml-[4rem] max-lg:ml-[4rem] max-xl:ml-[4rem] 
-                sm:mt-4 md:mt-6 lg:mt-8 xl:mt-10
+                sm:mt-8 md:mt-8 lg:mt-8 xl:mt-10
                 ${users.some((user) => user._id === selectedContact._id && user.isOnline)
                   ? "text-green-500"
                   : "text-red-500"
@@ -487,8 +487,11 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
           <BsEmojiSmile />
         </button>
         {showEmojiPicker && (
-          <div className="absolute bottom-20 ">
-            <EmojiPicker onEmojiClick={handleEmojiClick} />
+          <div className="absolute bottom-20 max-sm:h-[33vh] w-[50vh] ">
+            <EmojiPicker 
+            onEmojiClick={handleEmojiClick}
+            className="w-full h-full"
+            />
           </div>
         )}
         <input
