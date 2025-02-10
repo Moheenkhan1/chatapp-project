@@ -324,7 +324,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
           />
           <div className=" ml-4 max-md:ml-2 max-lg:ml-2 max-xl:ml-2" >
 
-          <h2 className="text-[1.2rem] font-bold text-white max-sm:fixed max-sm:ml-[4rem] max-sm:mt-[-0.7rem] max-md:ml-[4rem] max-md:mt-[-0.7rem] max-lg:ml-[4rem] max-lg:mt-[-0.7rem] max-xl:ml-[4rem] max-xl:mt-[-0.7rem] max-md:fixed max-lg:fixed max-xl:fixed ">{selectedContact.username}</h2>
+          <h2 className="text-[1.2rem] font-bold text-white max-sm:fixed max-sm:ml-[4rem] max-sm:mt-[0.7rem] max-md:ml-[4rem] max-md:mt-[-0.7rem] max-lg:ml-[4rem] max-lg:mt-[-0.7rem] max-xl:ml-[4rem] max-xl:mt-[-0.7rem] max-md:fixed max-lg:fixed max-xl:fixed ">{selectedContact.username}</h2>
           <span
               className={`max-sm:ml-[4rem] max-md:ml-[4rem] max-lg:ml-[4rem] max-xl:ml-[4rem] 
                 sm:mt-4 md:mt-6 lg:mt-8 xl:mt-10
@@ -349,7 +349,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 p-4 overflow-scroll bg-white text-black max-sm:mt-[6.3rem] max-sm:mb-[5rem] max-md:mt-[6rem] max-md:mb-[5rem] max-lg:mt-[6rem] max-lg:mb-[6rem] max-xl:mt-[8rem] max-xl:mb-[6rem]">
+      <div className="flex-1 p-4 overflow-scroll bg-white text-black max-sm:mt-[5.5rem] max-sm:mb-[5rem] max-md:mt-[6rem] max-md:mb-[5rem] max-lg:mt-[6rem] max-lg:mb-[6rem] max-xl:mt-[8rem] max-xl:mb-[6rem]">
         {chat.map((msg, index) => (
           <div
           key={index}
@@ -468,9 +468,8 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
       {/* <form onSubmit={sendChat} className="bg-[#E8E8E8] border-t-2 border-[#4169E1] p-4 flex items-center max-sm:fixed max-sm:bottom-0 max-sm:w-[100%] max-md:fixed max-md:bottom-0 max-md:w-[100%] max-lg:fixed max-lg:bottom-0 max-lg:w-[100%] max-xl:fixed max-xl:bottom-0 max-xl:w-[100%] max-sm:h-[10%] max-md:h-[10%] max-lg:h-[8%] max-xl:h-[10%] "> */}
       <form
   onSubmit={sendChat}
-  className={`bg-[#E8E8E8] border-t-2 border-[#4169E1] p-4 flex items-center fixed bottom-0 w-full h-[10%] transition-all duration-300 ${
-    isKeyboardOpen ? "bottom-[50%]" : "bottom-0"
-  }`}
+  className={`bg-[#E8E8E8] border-t-2 border-[#4169E1] p-4 flex items-center fixed bottom-0 w-full h-[10vh] transition-all duration-300 `}
+  style={{ bottom: "env(safe-area-inset-bottom)" }}
 >
 
 

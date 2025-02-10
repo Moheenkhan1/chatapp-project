@@ -1,6 +1,7 @@
 import React from 'react'
 import { FiArrowLeft } from "react-icons/fi";
-import { FiPaperclip, FiPhone, FiX } from "react-icons/fi";
+import { FiPaperclip, FiPhone, FiX  } from "react-icons/fi";
+import { FaCog } from "react-icons/fa";
 
 const Debug = () => {
 
@@ -105,84 +106,290 @@ const Debug = () => {
   ]
 
   return (
-    <div className="flex flex-col flex-1 bg-white max-sm:flex max-md:flex max-lg-flex max-xl-flex  max-[768px]:flex max-[1024px]:flex max-[912px]:flex max-[853px]:flex">
-      {/* Chat Header with Profile Picture */}
-      <div className="bg-[#385AC2] w-screen fixed text-black p-4 border-b border-gray-700 flex  items-center ">
-      <button className="max-sm:block max-md:block max-lg-block max-xl-block max-[768px]:block max-[1024px]:block max-[912px]:block max-[853px]:bloc  hidden text-white text-xl mr-3" >
-          <FiArrowLeft size={24} />
-        </button>
-        <div className="flex justify start gap-3 max-sm:ml-[1rem] max-md:ml-[1rem] max-lg:ml-[1rem] max-xl:ml-[1rem]">
-          <img
-            className="w-[3.5rem] h-[3.5rem] rounded-full object-cover ml-6 max-sm:ml-0 max-md:ml-0 max-lg:ml-0 max-xl:ml-0 ring "
-            src='https://unsplash.com/photos/the-sun-is-shining-through-the-trees-in-the-forest-KZwrFH42JCg'
-            alt="Profile"
-          />
-          <div className=" ml-4 max-sm:ml-2 max-md:ml-2 max-lg:ml-2 max-xl:ml-2" >
+    <div className={`relative w-1/4 max-md:w-full max-sm:w-full max-lg:w-full max-xl:w-full max-[768px]:w-full max-[1024px]:w-full max-[912px]:w-full max-[853px]:w-full bg-white p-5 shadow-md text-white overflow-auto`}>
 
-          <h2 className="text-[1.2rem] font-bold text-white">Admin</h2>
-          <span
-            className='text-green-500 '  
-          >
-            Online
-          </span>
+<div className="fixed  top-0 left-0 w-1/4 max-md:w-full bg-white p-5 shadow-md z-10">
+      <h2 className="text-[1.7rem] text-[#4169E1] font-extrabold mb-4">Chats</h2>
+      <input
+        type="text"
+        placeholder="Search chats..."
+        className="w-full p-2 bg-[#E8E8E8] text-black border border-gray-700 rounded-lg placeholder-black focus:outline-none focus:ring focus:ring-indigo-500"
+      />
+    </div>
 
-          </div>
-        </div>
-        {/* <button className="text-cyan-400 hover:text-cyan-300">
-          <FiPhone size={24} />
-        </button> */}
-      </div>
-
-      {/* Chat Messages */}
-      <div className="flex-1 p-4 mt-[6rem] mb-16 overflow-scroll bg-white text-black">
-        {chat.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex mb-2 ${msg.sender === "send" ? "justify-end" : "justify-start"}`}
-          >
-            {msg.message?.text && (
-              <div
-                className={`p-3 rounded-lg max-w-xs ${
-                  msg.sender === "send" ? "bg-[#4169E1] text-white" : "bg-gray-700 text-white"
-                }`}
-              >
-                <p>{msg.message.text}</p>
-              </div>
-            )}
-          </div>
-        ))}
-        <div />
-      </div>
-
-
-
-      {/* Message Input */}
-      <form  className="bg-[#E8E8E8] border-t-2 border-[#4169E1] p-4 flex items-center fixed bottom-0">
-      <label
-          htmlFor="file-input"
-          className="cursor-pointer ml-2 text-[#4169E1] hover:text-[#4169E1]-300 pr-3"
-        >
-          <FiPaperclip size={23} />
-        </label>
-        <input
-          type="text"
-          placeholder="Type a message"
-          className="bg-white text-black w-full max-sm:w-[60%] p-3 rounded-md focus:outline-none"
-        />
-        <input
-          type="file"
-          className="hidden"
-          id="file-input"
-        />
-        <button
-          className="custom-class shadow-lg shadow-indigo-500/50 ml-3 w-[10%] max-sm:w-[20%]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2]  "
-           type="submit"   
-          >
-            Send
-        </button>
-                
+      {/* Contacts List */}
+      <ul className="mt-[18vh] overflow-auto">
         
-      </form>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+          <li
+            
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 `}
+            
+          >
+            <div className="relative">
+              <img
+                className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+                src=''
+                alt="profile"
+                
+              />
+              {/* Online Status Indicator */}
+              
+            </div>
+            <p className="text-xl">Admin</p>
+          </li>
+      </ul>
+
+      {/* Settings Icon */}
+      <div
+        // Attach the ref to the settings icon
+        className="fixed bottom-5 left-5 text-[#385AC2] cursor-pointer"
+        
+      >
+        <FaCog size={30} />
+      </div>
+
+      {/* Settings Sidebar */}
+      
+
+      {/* Photo View */}
     </div>
   )
 }
