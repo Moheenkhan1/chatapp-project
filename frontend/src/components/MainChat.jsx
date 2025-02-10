@@ -290,7 +290,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
   return (
     <div className={`flex flex-col flex-1 bg-white ${showChat ? "max-sm:flex max-md:flex max-lg-flex max-xl-flex  max-[768px]:flex max-[1024px]:flex max-[912px]:flex max-[853px]:flex" : "max-sm:hidden max-md:hidden max-lg-hidden max-xl-hidden max-[768px]:hidden max-[1024px]:hidden max-[912px]:hidden max-[853px]:hidden"}`}>
       {/* Chat Header with Profile Picture */}
-      <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex items-center max-sm:h-[10%] max-md:h-[10%] max-lg:h-[10%] max-xl:h-[10%] max-sm:fixed  max-md:fixed max-lg:fixed max-xl:fixed max-sm:w-[100%] max-md:w-[100%] max-lg:w-[100%] max-xl:w-[100%]">
+      <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex items-center max-sm:h-[10%] max-md:h-[10%] max-lg:h-[8%] max-xl:h-[10%] max-sm:fixed  max-md:fixed max-lg:fixed max-xl:fixed max-sm:w-[100%] max-md:w-[100%] max-lg:w-[100%] max-xl:w-[100%]">
       <button className="max-sm:block max-md:block max-lg-block max-xl-block max-[768px]:block max-[1024px]:block max-[912px]:block max-[853px]:block  hidden text-white text-xl mr-3 max-sm:fixed max-md:fixed max-lg:fixed max-xl:fixed" onClick={() => setShowChat(false)}>
           <FiArrowLeft size={24} />
         </button>
@@ -327,7 +327,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 p-4 overflow-y-auto bg-white text-black max-sm:mt-[5rem] max-md:mt-[6rem] max-lg:mt-[6rem] max-xl:mt-[6rem]">
+      <div className="flex-1 p-4 overflow-y-auto bg-white text-black max-sm:mt-[5rem] max-sm:mb-[5rem] max-md:mt-[6rem] max-md:mb-[5rem] max-lg:mt-[6rem] max-lg:mb-[6rem] max-xl:mt-[8rem] max-xl:mb-[6rem]">
         {chat.map((msg, index) => (
           <div
           key={index}
@@ -443,16 +443,16 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
 
 
       {/* Message Input */}
-      <form onSubmit={sendChat} className="bg-[#E8E8E8] border-t-2 border-[#4169E1] p-4 flex items-center">
+      <form onSubmit={sendChat} className="bg-[#E8E8E8] border-t-2 border-[#4169E1] p-4 flex items-center max-sm:fixed max-sm:bottom-0 max-sm:w-[100%] max-md:fixed max-md:bottom-0 max-md:w-[100%] max-lg:fixed max-lg:bottom-0 max-lg:w-[100%] max-xl:fixed max-xl:bottom-0 max-xl:w-[100%] max-sm:h-[10%] max-md:h-[10%] max-lg:h-[8%] max-xl:h-[10%] ">
       <label
           htmlFor="file-input"
-          className="cursor-pointer ml-2 text-[#4169E1] hover:text-[#4169E1]-300 pr-3"
+          className="cursor-pointer ml-2 text-[#4169E1] hover:text-[#4169E1]-300 pr-3 max-sm:fixed max-sm:left-2 max-md:fixed max-md:left-2 max-lg:fixed max-lg:left-2 max-xl:fixed max-xl:left-2"
         >
           <FiPaperclip size={23} />
         </label>
         <button
           type="button"
-          className="text-xl mr-2 text-[#4169E1] hover:text-[#4169E1]-400"
+          className="text-xl mr-2 text-[#4169E1] hover:text-[#4169E1]-400 max-sm:fixed max-sm:ml-[1.6rem] max-md:fixed max-md:ml-[1.6rem] max-lg:fixed max-sm:lg-[1.6rem] max-xl:fixed max-xl:ml-[1.6rem]"
           onClick={() => setShowEmojiPicker(!showEmojiPicker)}
         >
           <BsEmojiSmile />
@@ -467,7 +467,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
           value={messages}
           onChange={(e) => setMessages(e.target.value)}
           placeholder="Type a message"
-          className="bg-white text-black w-full max-sm:w-[60%] p-3 rounded-md focus:outline-none"
+          className="bg-white text-black w-full max-sm:w-[60%] p-3 rounded-md focus:outline-none max-sm:fixed max-sm:ml-[3.3rem] max-md:fixed max-md:ml-[3.3rem] max-lg:fixed max-lg:ml-[3.3rem] max-xl:fixed max-xl:ml-[3.3rem] max-md:w-[80%] max-lg:w-[80%] max-xl:w-[80%]"
         />
         <input
           type="file"
@@ -476,7 +476,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
           id="file-input"
         />
         <button
-          className="custom-class shadow-lg shadow-indigo-500/50 ml-3 w-[10%] max-sm:w-[20%]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2]  "
+          className="custom-class shadow-lg shadow-indigo-500/50 ml-3 w-[10%] max-sm:w-[20%]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2] max-sm:fixed max-sm:ml-[17.6rem] max-md:fixed max-md:ml-[17.6rem] max-lg:fixed max-lg:right-0   max-xl:fixed max-xl:right-10"
            type="submit"   
           >
             Send
