@@ -290,7 +290,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
   return (
     <div className={`flex flex-col flex-1 bg-white ${showChat ? "max-sm:flex max-md:flex max-lg-flex max-xl-flex  max-[768px]:flex max-[1024px]:flex max-[912px]:flex max-[853px]:flex" : "max-sm:hidden max-md:hidden max-lg-hidden max-xl-hidden max-[768px]:hidden max-[1024px]:hidden max-[912px]:hidden max-[853px]:hidden"}`}>
       {/* Chat Header with Profile Picture */}
-      <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex items-center max-sm:h-[10%] max-md:h-[10%] max-lg:h-[10%] max-xl:h-[10%] ">
+      <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex items-center max-sm:h-[10%] max-md:h-[10%] max-lg:h-[10%] max-xl:h-[10%] max-sm:fixed  max-md:fixed max-lg:fixed max-xl:fixed max-sm:w-[100%] max-md:w-[100%] max-lg:w-[100%] max-xl:w-[100%]">
       <button className="max-sm:block max-md:block max-lg-block max-xl-block max-[768px]:block max-[1024px]:block max-[912px]:block max-[853px]:block  hidden text-white text-xl mr-3 max-sm:fixed max-md:fixed max-lg:fixed max-xl:fixed" onClick={() => setShowChat(false)}>
           <FiArrowLeft size={24} />
         </button>
@@ -327,7 +327,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 p-4 overflow-y-auto bg-white text-black">
+      <div className="flex-1 p-4 overflow-y-auto bg-white text-black max-sm:mt-[5rem] max-md:mt-[6rem] max-lg:mt-[6rem] max-xl:mt-[6rem]">
         {chat.map((msg, index) => (
           <div
           key={index}
