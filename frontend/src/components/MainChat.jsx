@@ -316,7 +316,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
       <button className="max-sm:block max-md:block max-lg-block max-xl-block max-[768px]:block max-[1024px]:block max-[912px]:block max-[853px]:block  hidden text-white text-xl mr-3 max-sm:fixed max-md:fixed max-lg:fixed max-xl:fixed" onClick={() => setShowChat(false)}>
           <FiArrowLeft size={24} />
         </button>
-        <div className="flex justify start gap-3 max-sm:ml-[1rem] max-md:ml-[1rem] max-lg:ml-[1rem] max-xl:ml-[1rem] max-sm:fixed max-md:fixed max-lg:fixed">
+        <div className="flex justify start gap-3 max-sm:ml-[2.5rem] max-md:ml-[1rem] max-lg:ml-[1rem] max-xl:ml-[1rem] max-sm:fixed max-md:fixed max-lg:fixed">
           <img
             className="w-[3.5rem] h-[3.5rem] rounded-full object-cover ml-6 max-sm:ml-4 max-md:ml-0 max-xl:ml-0 ring max-sm:h-[3rem] max-sm:w-[3rem] max-sm:mt-[-0.7rem]  max-md:mt-[-0.7rem]  max-lg:mt-[-0.7rem]  max-xl:mt-[-0.7rem] md:h-[3rem] md:w-[3rem] md:mt-0.9 md:ml-[1rem] max-lg:h-[3rem] max-lg:w-[3rem] max-sm:fixed max-md:fixed max-lg:fixed max-xl:fixed "
             src={selectedContact.profilePicture}
@@ -327,7 +327,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
           <h2 className="text-[1.2rem] font-bold text-white max-sm:ml-[4rem] max-sm:mt-[-0.7rem] max-md:ml-[4rem] max-md:mt-[-0.7rem] max-lg:ml-[4rem] max-lg:mt-[-0.7rem] max-xl:ml-[4rem] max-xl:mt-[-0.7rem] max-md:fixed max-lg:fixed max-xl:fixed ">{selectedContact.username}</h2>
           <span
               className={`max-sm:ml-[4rem] max-md:ml-[4rem] max-lg:ml-[4rem] max-xl:ml-[4rem] 
-                max-sm:mt-[2rem] md:mt-10 lg:mt-10 xl:mt-10
+                max-sm:mt-[0.8rem] md:mt-10 lg:mt-10 xl:mt-10
                 ${users.some((user) => user._id === selectedContact._id && user.isOnline)
                   ? "text-green-500"
                   : "text-red-500"
