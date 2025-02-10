@@ -349,7 +349,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 p-4 overflow-y-auto bg-white text-black max-sm:mt-[5rem] max-sm:mb-[5rem] max-md:mt-[6rem] max-md:mb-[5rem] max-lg:mt-[6rem] max-lg:mb-[6rem] max-xl:mt-[8rem] max-xl:mb-[6rem]">
+      <div className="flex-1 p-4 overflow-scroll bg-white text-black max-sm:mt-[6.3rem] max-sm:mb-[5rem] max-md:mt-[6rem] max-md:mb-[5rem] max-lg:mt-[6rem] max-lg:mb-[6rem] max-xl:mt-[8rem] max-xl:mb-[6rem]">
         {chat.map((msg, index) => (
           <div
           key={index}

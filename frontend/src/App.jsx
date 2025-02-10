@@ -7,6 +7,7 @@ import UserContext from './Contexts/UserContext';
 import { OnlineUsersProvider } from './Contexts/OnlineUsersContext';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Debug from './pages/Debug';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path='/test' element={ <Debug /> } />
         </Routes>
 
         <ToastContainer/>
