@@ -31,6 +31,28 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); 
 
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+
+
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.visualViewport.height < window.innerHeight) {
+        setIsKeyboardOpen(true);
+      } else {
+        setIsKeyboardOpen(false);
+      }
+    };
+  
+    window.visualViewport.addEventListener("resize", handleResize);
+    window.visualViewport.addEventListener("scroll", handleResize);
+  
+    return () => {
+      window.visualViewport.removeEventListener("resize", handleResize);
+      window.visualViewport.removeEventListener("scroll", handleResize);
+    };
+  }, []);
+
 
   
   
@@ -443,7 +465,15 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
 
 
       {/* Message Input */}
-      <form onSubmit={sendChat} className="bg-[#E8E8E8] border-t-2 border-[#4169E1] p-4 flex items-center max-sm:fixed max-sm:bottom-0 max-sm:w-[100%] max-md:fixed max-md:bottom-0 max-md:w-[100%] max-lg:fixed max-lg:bottom-0 max-lg:w-[100%] max-xl:fixed max-xl:bottom-0 max-xl:w-[100%] max-sm:h-[10%] max-md:h-[10%] max-lg:h-[8%] max-xl:h-[10%] ">
+      {/* <form onSubmit={sendChat} className="bg-[#E8E8E8] border-t-2 border-[#4169E1] p-4 flex items-center max-sm:fixed max-sm:bottom-0 max-sm:w-[100%] max-md:fixed max-md:bottom-0 max-md:w-[100%] max-lg:fixed max-lg:bottom-0 max-lg:w-[100%] max-xl:fixed max-xl:bottom-0 max-xl:w-[100%] max-sm:h-[10%] max-md:h-[10%] max-lg:h-[8%] max-xl:h-[10%] "> */}
+      <form
+  onSubmit={sendChat}
+  className={`bg-[#E8E8E8] border-t-2 border-[#4169E1] p-4 flex items-center fixed bottom-0 w-full h-[10%] transition-all duration-300 ${
+    isKeyboardOpen ? "bottom-[50%]" : "bottom-0"
+  }`}
+>
+
+
       <label
           htmlFor="file-input"
           className="cursor-pointer ml-2 text-[#4169E1] hover:text-[#4169E1]-300 pr-3 max-sm:fixed max-sm:left-2 max-md:fixed max-md:left-2 max-lg:fixed max-lg:left-2 max-xl:fixed max-xl:left-2"
