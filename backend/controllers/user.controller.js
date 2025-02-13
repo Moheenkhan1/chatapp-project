@@ -6,23 +6,13 @@ const authMiddleware = require('../middleware/authMiddleware.js')
 const multer = require("multer");
 const path = require("path");
 const upload = require("../config/multer.js"); // Import Cloudinary Multer config
-
-
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "profilePic/");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + path.extname(file.originalname));
-//   },
-// });
-
-// const profilePic = multer({ storage: storage });
+const nodemailer = require("nodemailer");
+const dns = require("dns");
 
 
 module.exports.registerUser = async (req, res) => {
-  console.log("🔵 Incoming Registration Request:", req.body);
-  console.log("📂 File Received:", req.file);
+  // console.log(" Incoming Registration Request:", req.body);
+  // console.log(" File Received:", req.file);
 
   const { username, email, password } = req.body;
   const profilePicture = req.file ? req.file.path : null; // Get Cloudinary URL
@@ -37,20 +27,31 @@ module.exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: "User already exists with this username or email" });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // Extract domain from email
+    const emailDomain = email.split("@")[1];
 
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword,
-      profilePicture,
+    // Check if email domain has valid MX records (Mail Exchange)
+    dns.resolveMx(emailDomain, async (err, addresses) => {
+      if (err || !addresses || addresses.length === 0) {
+        return res.status(400).json({ message: "Email domain is invalid or doesn't accept emails" });
+      }
+
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const newUser = new User({
+        username,
+        email,
+        password: hashedPassword,
+        profilePicture,
+      });
+
+      await newUser.save();
+      return res.status(201).json({ message: "User successfully registered", newUser });
     });
-
-    await newUser.save();
-    return res.status(200).json({ message: "User successfully registered", newUser });
   } catch (error) {
-    console.error("❌ Error registering user:", error);
+    // console.error("Error registering user:", error);
     return res.status(500).json({ message: "Server Error" });
   }
 };
@@ -89,7 +90,7 @@ module.exports.loginUser = async (req,res)=>{
       
           res.status(200).json({ token, user });
         } catch (error) {
-          console.error(error);
+          // console.error(error);
           res.status(500).json({ message: 'Server Error' });
         }
 }
@@ -98,3 +99,65 @@ module.exports.logoutUser = async (req,res)=>{
         res.clearCookie('token');
         res.status(200).json({ message: 'Logged out successfully' });
 }
+
+module.exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.id;
+
+    // Fetch the user from the database
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Compare the current password with the hashed password in the database
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    // Hash the new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update the user's password in the database
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+module.exports.updateProfilePicture = async (req, res) => {
+  try {
+    const userId = req.user.id; // Get user ID from authMiddleware
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Ensure a file was uploaded
+    if (!req.file || !req.file.path) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const profilePicture = req.file.path; // Get Cloudinary URL
+
+    // Update the user's profile picture in the database
+    user.profilePicture = profilePicture;
+    await user.save();
+
+    res.status(200).json({
+      message: "Profile picture updated successfully",
+      profilePicture: profilePicture, // Send updated profile URL to frontend
+    });
+
+  } catch (error) {
+    console.error("Error updating profile picture:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};

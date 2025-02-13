@@ -5,17 +5,6 @@ const multer = require("multer");
 const path = require("path");
 const upload = require("../config/multer"); // Cloudinary Multer config
 
-// Configure Multer Storage
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "uploads/");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + path.extname(file.originalname));
-//   },
-// });
-
-// const upload = multer({ storage: storage });
 
 // Fetch messages between sender and receiver
 module.exports.getMessages = async (req, res) => {
@@ -41,8 +30,8 @@ module.exports.getMessages = async (req, res) => {
 
 // Add a new message
 module.exports.addMessage = async (req, res) => {
-  console.log("📤 Received Chat Message:", req.body);
-  console.log("📂 File Received:", req.file);
+  // console.log(" Received Chat Message:", req.body);
+  // console.log(" File Received:", req.file);
 
   const { from, to, message } = req.body;
 
@@ -59,6 +48,22 @@ module.exports.addMessage = async (req, res) => {
   }
 
   try {
+
+    // Get the Socket.IO instance from app
+    const io = req.app.get("socketio");
+    if (!io) {
+      // console.error("❌ Socket.IO instance not found");
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+
+    // Emit the new message event only to the receiver
+    // console.log('notify to :',to)
+    io.to(to).emit("newMessage", {
+      from,
+      message,
+      timestamp: new Date(),
+    });
+
     const newMessage = await Message.create({
       message: { text: message, fileUrl, fileType },
       users: [from, to],
@@ -66,9 +71,11 @@ module.exports.addMessage = async (req, res) => {
       receiver: to,
     });
 
+
+
     return res.status(200).json(newMessage);
   } catch (error) {
-    console.error("❌ Error saving message:", error);
+    // console.error("❌ Error saving message:", error);
     return res.status(500).json({ message: "Error saving message" });
   }
 };
@@ -99,5 +106,79 @@ module.exports.deleteMessage = async (req, res) => {
     res.status(200).send("Message deleted successfully");
   } catch (error) {
     res.status(500).send("Error deleting message");
+  }
+};
+
+
+module.exports.getUnreadMessages = async (req, res) => {
+  try {
+    // console.log("🟢 Incoming request to /messages/unread");
+
+    // Extract user ID
+    const userId = req.user._id || req.user.id;
+    // console.log("🔍 Extracted user ID:", userId);
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized - No user ID found" });
+    }
+
+    // Ensure userId is always an ObjectId
+    const userObjectId = new mongoose.Types.ObjectId(userId.toString());
+
+    console.log("🔹 Converted User ObjectId:", userObjectId);
+
+    // Group unread messages by sender
+    const unreadCounts = await Message.aggregate([
+      { $match: { receiver: userObjectId, read: false } }, // ✅ Match unread messages for this user
+      { $group: { _id: "$sender", count: { $sum: 1 } } } // ✅ Count messages per sender
+    ]);
+
+    // console.log("✅ Unread Messages Count:", unreadCounts);
+
+    res.status(200).json(unreadCounts);
+  } catch (error) {
+    // console.error("❌ Error fetching unread messages:", error);
+    res.status(500).json({ message: "Error fetching unread messages" });
+  }
+};
+
+
+
+
+
+module.exports.markMessagesAsRead = async (req, res) => {
+  try {
+    const { senderId } = req.body;
+    const userId = req.user._id || req.user.id;
+
+    if (!senderId || !userId) {
+      return res.status(400).json({ message: "Missing senderId or userId" });
+    }
+
+    const userObjectId = new mongoose.Types.ObjectId(userId);
+    const senderObjectId = new mongoose.Types.ObjectId(senderId);
+
+    // ✅ Mark all unread messages as read
+    await Message.updateMany(
+      { sender: senderObjectId, receiver: userObjectId, read: false },
+      { $set: { read: true } }
+    );
+
+    // ✅ Get updated unread count
+    const unreadCount = await Message.countDocuments({
+      sender: senderObjectId,
+      receiver: userObjectId,
+      read: false,
+    });
+
+    // console.log(`📩 Marked messages as read. Updated unread count: ${unreadCount}`);
+
+    // ✅ Emit real-time update
+    req.app.get("socketio").emit("update-unread-count", { senderId, count: unreadCount });
+
+    res.status(200).json({ message: "Messages marked as read" });
+  } catch (error) {
+    // console.error("❌ Error marking messages as read:", error);
+    res.status(500).json({ message: "Error marking messages as read" });
   }
 };

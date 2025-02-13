@@ -9,6 +9,7 @@ const messageSchema = new mongoose.Schema({
   },
   sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  read: { type: Boolean, default: false },
   users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 }, {
   timestamps: true, // This ensures createdAt and updatedAt are automatically managed by Mongoose

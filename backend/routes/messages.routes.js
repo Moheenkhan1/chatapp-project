@@ -1,6 +1,6 @@
 // messages.routes.js (Backend Routes)
 const express = require("express");
-const { getMessages, addMessage, deleteMessage } = require("../controllers/message.controller");
+const { getMessages, addMessage, deleteMessage , getUnreadMessages , markMessagesAsRead } = require("../controllers/message.controller");
 const authMiddleware = require("../middleware/authMiddleware");
 const multer = require("multer");
 const path = require("path");
@@ -27,6 +27,11 @@ router.get("/getMessages/:sender/:receiver", authMiddleware, getMessages);
 router.post("/addMessages", authMiddleware,uploadChatFile.single('file'), addMessage);
 
 router.delete('/deleteMessage/:messageId/:userId', authMiddleware,  deleteMessage);
+
+router.get("/unread", authMiddleware, getUnreadMessages);
+
+router.post("/mark-as-read", authMiddleware, markMessagesAsRead);
+
 
 
 module.exports = router;

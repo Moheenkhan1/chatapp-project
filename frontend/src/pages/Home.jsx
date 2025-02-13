@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { UserDataContext } from "../Contexts/UserContext";
 import { io } from 'socket.io-client'
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Access env variable
@@ -17,6 +18,9 @@ const Home = () => {
   const { user , setUser } = useContext(UserDataContext); // Assuming user context is correctly set
   const [currentUser, setCurrentUser] = useState(null);
   const [contacts, setContacts] = useState([]); // Stores the list of contacts 
+  const [unreadCounts, setUnreadCounts] = useState({});
+  const [selectedContactId, setSelectedContactId] = useState(null);
+
 
   const [showChat, setShowChat] = useState(false); // Controls sidebar/chat visibility for responsive design on phone and tab
 
@@ -53,6 +57,68 @@ useEffect(() => {
     }
   },[currentUser])
 
+  useEffect(() => {
+    if (!socket.current) {
+      console.warn("⚠️ Socket is not connected.");
+      return;
+    }
+
+    console.log("✅ Listening for incoming messages...");
+
+    socket.current.on("msg-receive", (msg) => {
+      console.log("📩 Incoming message received globally:", msg); // Debugging Log
+    
+      if (!msg) {
+        console.error("❌ Message object is undefined!");
+        return;
+      }
+    
+      setUnreadCounts((prev) => ({
+        ...prev,
+        [msg.from]: (prev[msg.from] || 0) + 1,
+      }));
+    
+      
+      // ✅ Show a toast notification (only if message is not from the active chat)
+      if (msg.from !== selectedContactId) {
+        let notificationMessage = "";
+        
+        if (msg.message && msg.file) {
+          notificationMessage = `💬📁 New Chat from `;
+        } else if (msg.file) {
+          notificationMessage = `📁 New File from `;
+        } else if (msg.message) {
+          notificationMessage = `💬 New Message from `;
+        }
+
+        toast.info(
+          <div>
+            {notificationMessage}
+            <span className="font-bold text-blue-500">{msg.username}</span> {/* Styled Username */}
+            {`: ${msg.message || "File Received"}`}
+          </div>,
+          {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          }
+        );
+      }
+    });
+
+    return () => {
+      if (socket.current) {
+        socket.current.off("msg-receive");
+        console.log("🔴 Stopped listening for messages");
+      }
+    };
+  }, [socket.current]);
+
 
   // Initialize WebSocket connection
   useEffect(() => {
@@ -70,11 +136,13 @@ useEffect(() => {
         console.log("Socket connected:", socket.current.id);
         socket.current.emit("add-user", currentUser._id);
       });
-
+      
       // socket connection for checking online users
       socket.current.on("update-user-status", ({ userId, isOnline }) => {
         console.log(`User ${userId} is now ${isOnline ? "Online" : "Offline"}`);
       });
+
+      
     }
 
     return () => {
@@ -104,9 +172,33 @@ useEffect(() => {
 
   return (
     <div className="flex h-screen">
-      <Sidebar setSelectedContact={setSelectedContact} currentUser={currentUser} setCurrentUser={setCurrentUser} contacts={contacts} socket={socket} setShowChat={setShowChat} showChat={showChat} />
+      {/* <ToastContainer /> */}
+      <Sidebar 
+      setSelectedContact={setSelectedContact} 
+      currentUser={currentUser} 
+      setCurrentUser={setCurrentUser} 
+      contacts={contacts} 
+      socket={socket} 
+      setShowChat={setShowChat} 
+      showChat={showChat} 
+      setUnreadCounts={setUnreadCounts} 
+      unreadCounts={unreadCounts}
+      selectedContactId={selectedContactId}
+      setSelectedContactId={setSelectedContactId}
+       />
       <div className="w-[1px] bg-[#4169E1] "></div>
-      <MainChat selectedContact={selectedContact} currentUser={currentUser} socket={socket} setCurrentUser={setCurrentUser} setShowChat={setShowChat} showChat={showChat} />
+      <MainChat 
+      selectedContact={selectedContact} 
+      currentUser={currentUser} 
+      socket={socket} 
+      setCurrentUser={setCurrentUser} 
+      setShowChat={setShowChat} 
+      showChat={showChat} 
+      setUnreadCounts={setUnreadCounts} 
+      unreadCounts={unreadCounts}
+      selectedContactId={selectedContactId}
+      setSelectedContactId={setSelectedContactId}
+       />
     </div>
   );
 };

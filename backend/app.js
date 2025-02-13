@@ -22,7 +22,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: `${process.env.FRONTEND_URI}`, // Adjust this to your front-end URL
+  origin: `${process.env.FRONTEND_URI}`, // Adjust this to your front-end URL  ${process.env.FRONTEND_URI}
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -60,10 +60,12 @@ const io = socket(server, {
   },
 });
 
+app.set("socketio", io);
+
 global.onlineUsers = new Map();
 
 io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
+  // console.log(`User connected: ${socket.id}`);
 
 
   // Handle user going online
@@ -73,7 +75,7 @@ io.on("connection", (socket) => {
     onlineUsers.set(userId, socket.id);
     await User.findByIdAndUpdate(userId, { isOnline: true });
 
-    console.log(`User ${userId} is now online`);
+    // console.log(`User ${userId} is now online`);
 
     // ✅ Send real-time update to ALL connected clients
     io.emit("update-user-status", { userId, isOnline: true });
@@ -95,9 +97,9 @@ io.on("connection", (socket) => {
       }));
 
       socket.emit('online-users', onlineUsersArray);
-      console.log('Sent online users:', onlineUsersArray);
+      // console.log('Sent online users:', onlineUsersArray);
     } catch (error) {
-      console.error('Error fetching online users:', error);
+      // console.error('Error fetching online users:', error);
       socket.emit('online-users', []);
     }
   });
@@ -105,14 +107,32 @@ io.on("connection", (socket) => {
   // Handle message sending
   socket.on("send-msg", async (data) => {
     const sendUserSocket = onlineUsers.get(data.to);
+    const senderUser = await User.findById(data.from)
+  
     if (sendUserSocket) {
       io.to(sendUserSocket).emit("msg-receive", {
         from: data.from,
         message: data.message,
         file: data.file,
+        username: senderUser.username,
       });
     }
+  
+    // ✅ Get updated unread message count
+    const unreadCount = await Message.countDocuments({
+      sender: data.from,
+      receiver: data.to,
+      read: false,
+    });
+  
+    // console.log(`📩 Updated Unread Count: ${unreadCount} for sender ${data.from}`);
+  
+    // ✅ Emit real-time update to ALL clients
+    io.emit("update-unread-count", { senderId: data.from, count: unreadCount });
+  
   });
+
+  
 
   // Handle user disconnect
   socket.on("disconnect", async () => {
@@ -122,13 +142,13 @@ io.on("connection", (socket) => {
       onlineUsers.delete(userId);
       await User.findByIdAndUpdate(userId, { isOnline: false });
 
-      console.log(`User ${userId} went offline`);
+      // console.log(`User ${userId} went offline`);
 
       // ✅ Send real-time update to ALL connected clients
       io.emit("update-user-status", { userId, isOnline: false });
     }
 
-    console.log(`User disconnected: ${socket.id}`);
+    // console.log(`User disconnected: ${socket.id}`);
   });
 
 });

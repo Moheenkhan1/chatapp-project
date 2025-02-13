@@ -9,8 +9,11 @@ import EmojiPicker from "emoji-picker-react";
 import { useOnlineUsers } from '../Contexts/OnlineUsersContext';
 import { MdCancel } from "react-icons/md";
 import { FiArrowLeft } from "react-icons/fi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showChat }) => {
+
+const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showChat, unreadCounts , setUnreadCounts ,selectedContactId,setSelectedContactId }) => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Access env variable
 
   const scrollRef = useRef();
@@ -82,7 +85,45 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
     console.log("✅ Updated File State:", file); // Now it will show the correct value
   }, [file]);
   
+  const markMessagesAsRead = async (contactId) => {
+    if (!contactId) return;
+  
+    console.log("Marking messages as read for: ", contactId); // ✅ Debug Log
+  
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/messages/mark-as-read`,
+        { senderId: contactId },
+        { withCredentials: true }
+      );
+  
+      console.log("✅ Server Response for Marking Read:", response.data);
+  
+      // ✅ Update unread count in state
+      if (setUnreadCounts) {
+        setUnreadCounts((prev) => ({ ...prev, [contactId]: 0 }));
+      }
+  
+      // ✅ Emit real-time update to all clients
+      if (socket.current) {
+        socket.current.emit("update-unread-count", { senderId: contactId, count: 0 });
+      }
+  
+    } catch (error) {
+      console.error("❌ Error marking messages as read:", error);
+    }
+  };
+  
 
+  useEffect(() => {
+    if (selectedContact && currentUser) {
+      console.log("🔹 Checking unread messages for", selectedContact.username);
+      markMessagesAsRead(selectedContact._id);
+    }
+  }, [chat]); // ✅ Runs every time a new message is received
+  
+  
+  
   // Handle sending messages
   const sendChat = async (e) => {
     e.preventDefault();
@@ -123,10 +164,16 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
   useEffect(() => {
     if (socket.current) {
       socket.current.on("msg-receive", (msg) => {
-        setIncomingMsg({ fromSelf: false, message: msg });
+        setChat((prevChat) => [...prevChat, msg]);
       });
     }
-  }, []);
+    return () => {
+      if (socket.current) {
+        socket.current.off("msg-receive");
+      }
+    };
+  }, [socket, selectedContact]);
+
 
 
   // online users
@@ -312,6 +359,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
   return (
     <div className={`flex flex-col flex-1 bg-white ${showChat ? "max-sm:flex max-md:flex max-lg-flex max-xl-flex  max-[768px]:flex max-[1024px]:flex max-[912px]:flex max-[853px]:flex" : "max-sm:hidden max-md:hidden max-lg-hidden max-xl-hidden max-[768px]:hidden max-[1024px]:hidden max-[912px]:hidden max-[853px]:hidden"}`}>
       {/* Chat Header with Profile Picture */}
+      
       <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex items-center max-sm:h-[10%] max-md:h-[10%] max-lg:h-[8%] max-xl:h-[10%] max-sm:fixed  max-md:fixed max-lg:fixed max-xl:fixed max-sm:w-[100%] max-md:w-[100%] max-lg:w-[100%] max-xl:w-[100%]">
       <button className="max-sm:block max-md:block max-lg-block max-xl-block max-[768px]:block max-[1024px]:block max-[912px]:block max-[853px]:block  hidden text-white text-xl mr-3 max-sm:fixed max-md:fixed max-lg:fixed max-xl:fixed" onClick={() => setShowChat(false)}>
           <FiArrowLeft size={24} />

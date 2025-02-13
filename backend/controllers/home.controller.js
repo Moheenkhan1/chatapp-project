@@ -18,7 +18,7 @@ module.exports.authHome = async (req, res) => {
       // Get token from cookies
       const token = req.cookies.token;
 
-      console.log('token',token)
+      // console.log('token',token)
       
       if (!token) {
         return res.status(401).json({ message: "No token, authorization denied" });
@@ -27,12 +27,12 @@ module.exports.authHome = async (req, res) => {
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET); // Ensure JWT_SECRET is in .env
 
-      console.log("decoded",decoded)
+      // console.log("decoded",decoded)
   
       // Find user by ID from decoded token
       const user = await User.findById(decoded.userId).select("-password"); // Exclude password for security
 
-      console.log('authuser',user)
+      // console.log('authuser',user)
   
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -41,7 +41,7 @@ module.exports.authHome = async (req, res) => {
       // Send user data
       res.status(200).json(user);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       res.status(500).json({ message: "Server error" });
     }
   };

@@ -8,7 +8,7 @@ const multer = require("multer");
 const path = require("path");
 const { uploadProfile } = require("../config/multer"); // Import Cloudinary Multer config
 
-const {registerUser,loginUser,logoutUser} = require('../controllers/user.controller.js')
+const {registerUser,loginUser,logoutUser,changePassword,updateProfilePicture } = require('../controllers/user.controller.js')
 
 const router = express.Router();
 
@@ -31,5 +31,12 @@ router.post('/login', loginUser);
 
 //logout route
 router.post('/logout', logoutUser);
+
+//Change password Route
+router.post('/change-password',authMiddleware,changePassword)
+
+// Change Profile Picture
+router.post('/updateProfile', authMiddleware, uploadProfile.single('profilePicture'), updateProfilePicture);
+
 
 module.exports = router;
