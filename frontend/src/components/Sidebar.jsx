@@ -269,7 +269,7 @@ const handleFileChange = (event) => {
             <div className="relative">
               <img
                 className="w-[4rem] h-[4rem] ring rounded-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
-                src={contact.profilePicture}
+                src={contact.profilePicture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
                 alt="profile"
                 onClick={(e) => handlePhotoClick(contact.profilePicture, e)}
               />
@@ -309,7 +309,7 @@ const handleFileChange = (event) => {
           <div className="flex items-center space-x-4">
             <img
               className="w-12 h-12 rounded-full object-cover ring"
-              src={currentUser.profilePicture}
+              src={currentUser.profilePicture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
               alt="Profile"
             />
             <h3 className="text-xl text-[#385AC2] font-bold">{currentUser.username}</h3>

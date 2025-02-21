@@ -36,6 +36,9 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
 
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
+  const [selectedEmoji, setSelectedEmoji] = useState(null);
+  const [reactions, setReactions] = useState({});
+
 
 
   useEffect(() => {
@@ -313,9 +316,11 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
         `${API_BASE_URL}/messages/deleteMessage/${msgId}/${currentUser._id}`,
         { withCredentials: true } 
       );
+      toast.success("Message deleted successfully ", { position: "top-center", autoClose: 3000, });
       setChat((prev) => prev.filter((msg) => msg._id !== msgId));
     } catch (error) {
       console.error("Error deleting message:", error.response?.data || error.message);
+      toast.error("Failed to copy message.", { position: "top-center", autoClose: 3000 });
     }
   };
 
@@ -329,14 +334,25 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const handleRightClick = (e, messageId) => {
-    e.preventDefault(); // Prevents the default context menu
-    setSelectedMessage(messageId);
+  const handleRightClick = (e, messageId, message) => {
+    e.preventDefault();
+    setSelectedMessage(messageId); // Set the selected message
+    setForwardingMessage(message); // Set the message being forwarded
   };
   
   const handleDelete = (messageId) => {
     deleteMessage(messageId);
     setSelectedMessage(null);
+  };
+
+   // Copy 
+   const copyMessageToClipboard = (messageText) => {
+    navigator.clipboard.writeText(messageText).then(() => {
+      toast.success("Message copied to clipboard!", { position: "top-center", autoClose: 3000 });
+    }).catch((error) => {
+      console.error("Error copying message:", error);
+      toast.error("Failed to copy message.", { position: "top-center", autoClose: 3000 });
+    });
   };
   
   
@@ -351,9 +367,28 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
     );
   }
   //emoji
+   const handleEmojiSelect = (emoji, messageId) => {
+    setReactions((prev) => ({
+      ...prev,
+      [messageId]: prev[messageId] === emoji ? null : emoji, // Toggle emoji selection
+    }));
+    setSelectedMessage(null); // Hide menu after selecting an emoji
+  };
+
+
   const handleEmojiClick = (emojiObject) => {
     setMessages((prev) => prev + emojiObject.emoji);
   };
+
+  const handleEmojiClickReaction = (emoji) => {
+    setSelectedEmoji(emoji); // Set selected emoji
+    handleEmojiSelect(emoji, selectedMessage); // Update reaction
+  };
+
+  const handleEmojiPickerClose = () => {
+    setShowEmojiPicker(false); // Close emoji picker when clicking outside
+  };
+  
   
 
   return (
@@ -367,7 +402,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
         <div className="flex justify start gap-3 max-sm:ml-[2rem] max-md:ml-[1rem] max-lg:ml-[1rem] max-xl:ml-[1rem] max-sm:fixed max-md:fixed max-lg:fixed">
           <img
             className="w-[3.5rem] h-[3.5rem] rounded-full object-cover ml-6 max-sm:ml-4 max-md:ml-0 max-xl:ml-0 ring max-sm:h-[3rem] max-sm:w-[3rem] max-sm:mt-[-0.7rem]  max-md:mt-[-0.7rem]  max-lg:mt-[-0.7rem]  max-xl:mt-[-0.7rem] md:h-[3rem] md:w-[3rem] md:mt-0.9 md:ml-[1rem] max-lg:h-[3rem] max-lg:w-[3rem] max-sm:fixed max-md:fixed max-lg:fixed max-xl:fixed "
-            src={selectedContact.profilePicture}
+            src={selectedContact.profilePicture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
             alt="Profile"
           />
           <div className="flex gap-4 ml-4 max-md:ml-2 max-lg:ml-2 max-xl:ml-2" >
@@ -445,29 +480,49 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
         </div>
       )}
 
-      {/* Text Only Messages */}
+      {/* Text Messages */}
       {msg.message?.text && !msg.message.fileUrl && (
-        <div
-          className={`p-3 rounded-lg max-w-xs ${
-            msg.sender === currentUser._id ? "bg-[#4169E1] text-white" : "bg-gray-700 text-white"
-          }`}
-        >
-          <p>{msg.message.text}</p>
-        </div>
-      )}
+            <div className={`relative p-3 rounded-lg max-w-xs ${msg.sender === currentUser._id ? "bg-[#4169E1] text-white" : "bg-gray-700 text-white"}`}>
+              <p>{msg.message.text}</p>
+            </div>
+          )}
+
+                  {/* Right-Click Menu (Delete & Emoji Reactions) */}
+        {selectedMessage === msg._id && (
+          <div className="absolute top-[] flex items-center space-x-2 bg-white shadow-md p-2 rounded-lg">
+           
+            {/* Emoji Reaction Options */}
+            <div className="flex space-x-2">
+              {["👍", "😂", "❤️", "🔥", "😮"].map((emoji) => (
+                <button key={emoji} className="text-xl" onClick={() => handleEmojiSelect(emoji, msg._id)}>
+                  {emoji}
+                </button>
+              ))}
+              
+            </div>
 
 
-            
-
-            {/* Delete button */}
-            {msg.sender === currentUser._id && selectedMessage === msg._id && (
-              <button
-               className="text-red-500 ml-2 "
-               onClick={() => handleDelete(msg._id)}
+             {/* Copy Button */}
+             <button
+                className="text-blue-500 ml-2"
+                onClick={() => copyMessageToClipboard(msg.message.text)}
               >
-               Delete
+                Copy
+              </button>
+              
+             {/* Show Delete Button only for sender */}
+            {msg.sender === currentUser._id && (
+              <button className="text-red-500 ml-2" onClick={() => deleteMessage(msg._id)}>
+                Delete
               </button>
             )}
+      
+          </div>
+        )}
+          {/* Display Reaction at Bottom-Left */}
+          {reactions[msg._id] && (
+            <span className="relative bottom-[-5px] left-2 text-xl">{reactions[msg._id]}</span>
+          )}
           </div>
         ))}
         <div ref={scrollRef} />
@@ -546,7 +601,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
           value={messages}
           onChange={(e) => setMessages(e.target.value)}
           placeholder="Type a message"
-          className="bg-white text-black w-full max-sm:w-[60%] p-3 rounded-md focus:outline-none max-sm:fixed max-sm:ml-[3.3rem] max-md:fixed max-md:ml-[3.3rem] max-lg:fixed max-lg:ml-[3.3rem] max-xl:fixed max-xl:ml-[3.3rem] max-md:w-[80%] max-lg:w-[80%] max-xl:w-[80%]"
+          className="bg-white text-black w-[60%] max-sm:w-[60%] p-3 rounded-md focus:outline-none max-sm:fixed max-sm:ml-[3.3rem] max-md:fixed max-md:ml-[3.3rem] max-lg:fixed max-lg:ml-[3.3rem] max-xl:fixed max-xl:ml-[3.3rem] max-md:w-[80%] max-lg:w-[80%] max-xl:w-[80%]"
         />
         <input
           type="file"
