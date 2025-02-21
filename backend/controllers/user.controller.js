@@ -48,7 +48,7 @@ module.exports.registerUser = async (req, res) => {
       });
 
       await newUser.save();
-      return res.status(201).json({ message: "User successfully registered", newUser });
+      return res.status(200).json({ message: "User successfully registered", newUser });
     });
   } catch (error) {
     // console.error("Error registering user:", error);
