@@ -18,7 +18,8 @@ const chatStorage = new CloudinaryStorage({
     params: {
       folder: 'chat_files',
       upload_preset: 'my_preset', // Use your actual preset name
-      allowed_formats: ['jpg', 'jpeg', 'png', 'pdf', 'mp4', 'mp3', 'docx', 'zip'],
+      allowed_formats: ['jpg', 'jpeg', 'png', 'pdf', 'mp4', 'mp3', 'wav', 'ogg', 'mov'],
+      resource_type: 'auto',
       public_id: (req, file) => `chat-${Date.now()}-${file.originalname.replace(/\s/g, "_")}`,
     },
   });

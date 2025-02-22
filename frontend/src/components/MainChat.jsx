@@ -131,37 +131,44 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
   const sendChat = async (e) => {
     e.preventDefault();
     if (!messages.trim() && !file) return;
-
+  
     const formData = new FormData();
     formData.append("from", currentUser._id);
     formData.append("to", selectedContact._id);
     formData.append("message", messages);
-    if (file) formData.append("file", file);
-
+    if (file) {
+      formData.append("file", file); // ✅ Ensure file is properly attached
+    }
+  
     try {
-      socket.current.emit("send-msg", {
-        from: currentUser._id,
-        to: selectedContact._id,
-        message: messages,
-        file,
-      });
-
       const response = await axios.post(
         `${API_BASE_URL}/messages/addMessages`,
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { "Content-Type": "multipart/form-data" }, // ✅ Required for file uploads
           withCredentials: true,
         }
       );
+  
+      // ✅ Send file metadata via Socket.io
+      socket.current.emit("send-msg", {
+        from: currentUser._id,
+        to: selectedContact._id,
+        message: messages,
+        fileUrl: response.data.message.fileUrl, // ✅ Ensure correct file URL
+        fileType: response.data.message.fileType,
+      });
+  
       setMessages("");
       setFile(null);
       setFilePreview(null);
-      setChat((prevChat) => [...prevChat, response.data]);
+      setChat((prevChat) => [...prevChat, response.data]); // ✅ Update chat UI
     } catch (error) {
       console.error("Error sending message:", error.response?.data || error.message);
     }
   };
+  
+  
 
   // Handle incoming messages
   useEffect(() => {
@@ -265,48 +272,53 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
   }, [chat]);
   
 // Handle file selection 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    console.log('sekk',selectedFile)
-    setFile(selectedFile);
+const handleFileChange = (e) => {
+  const selectedFile = e.target.files[0];
+  setFile(selectedFile);
 
-    console.log('bvuvhv',file)
+  if (selectedFile) {
+    const fileType = selectedFile.type.split("/")[0];
+    const fileUrl = URL.createObjectURL(selectedFile);
 
-    if (selectedFile) {
-      const fileType = selectedFile.type.split("/")[0];
-      const fileUrl = URL.createObjectURL(selectedFile);
-
-      if (fileType === "image") {
-        setFilePreview(<img src={fileUrl} alt="Selected" className="max-w-xs rounded-lg" />);
-      } else if (fileType === "video") {
-        setFilePreview(<video controls className="max-w-xs rounded-lg" src={fileUrl} />);
-      } else if (fileType === "audio") {
-        setFilePreview(<audio controls className="max-w-xs rounded-lg" src={fileUrl} />);
-      } else {
-        setFilePreview(null);
-      }
+    if (fileType === "image") {
+      setFilePreview(<img src={fileUrl} alt="Selected" className="max-w-xs rounded-lg" />);
+    } else if (fileType === "video") {
+      setFilePreview(<video controls className="max-w-xs rounded-lg" src={fileUrl} />);
+    } else if (fileType === "audio") {
+      setFilePreview(<audio controls className="max-w-xs rounded-lg" src={fileUrl} />);
+    } else {
+      setFilePreview(null);
     }
-  };
+  }
+};
+
 
   const removeFile = () => {
     setFile(null);
     setFilePreview(null);
   };
 
- // Handle Image/Video Click for Lightbox
- const handleMediaClick = (src, type) => {
-  const media = chat
-    .filter((msg) => msg.message.fileType === "image" )
-    .map((msg) => ({
-      src: `${API_BASE_URL}${msg.message.fileUrl}`,
-      type: msg.message.fileType,
-    }));
-
-  const index = media.findIndex((item) => item.src === src);
-  setLightboxMedia(media);
-  setCurrentMediaIndex(index);
-  setIsLightboxOpen(true);
-};
+  const handleMediaClick = (src) => {
+    const media = chat
+      .filter((msg) => msg.message.fileType === "image" || msg.message.fileType === "video")
+      .map((msg) => ({
+        src: msg.message.fileUrl,
+        type: msg.message.fileType,
+      }));
+  
+    // Find correct index
+    const index = media.findIndex((item) => item.src === src);
+  
+    if (index === -1) {
+      console.error("Media not found:", src);
+      return;
+    } 
+    setLightboxMedia([...media]);
+    setCurrentMediaIndex(index);
+    setIsLightboxOpen(true);
+  };
+  
+  
   
   
 
@@ -432,7 +444,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 p-4 overflow-scroll bg-white text-black max-sm:mt-[5.5rem] max-sm:mb-[5rem] max-md:mt-[6rem] max-md:mb-[5rem] max-lg:mt-[6rem] max-lg:mb-[6rem] max-xl:mt-[8rem] max-xl:mb-[6rem]">
+      <div className="flex-1 p-4 overflow-scroll bg-white text-black max-sm:mt-[5.5rem]  mb-[4rem] max-sm:mb-[5rem] max-md:mt-[6rem] max-md:mb-[5rem] max-lg:mt-[6rem] max-lg:mb-[6rem] max-xl:mt-[8rem] max-xl:mb-[6rem]">
         {chat.map((msg, index) => (
           <div
           key={index}
@@ -441,7 +453,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
         >
 
             {msg.message.fileUrl !== null && msg.message.fileUrl && (
-              <div className="mt-2 max-sm:w-[40%] max-md:w-[40%] max-lg:w-[40%] max-xl:w-[40%]  ">
+              <div className="mt-2 max-sm:w-[40%] max-md:w-[40%] max-lg:w-[40%] max-xl:w-[40%]">
                <div
             className={`rounded-lg p-0.5 bg-[#4169E1] shadow-md flex flex-col items-center`} 
           >
@@ -527,16 +539,22 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
         ))}
         <div ref={scrollRef} />
       </div>
-              <Lightbox
-          open={isLightboxOpen}
-          close={() => setIsLightboxOpen(false)}
-          slides={lightboxMedia.map((media) => ({
-            src: media.src,
-            type: media.type === "video" ? "video" : "image", // Ensure that type is passed as either 'image' or 'video'
-          }))}
-          currentIndex={currentMediaIndex}
-          plugins={[Zoom]}
-        />
+            <Lightbox
+        open={isLightboxOpen}
+        close={() => setIsLightboxOpen(false)}
+        slides={lightboxMedia.map((media) => ({
+          src: media.src,
+          type: media.type === "video" ? "video" : "image",
+        }))}
+        index={currentMediaIndex} // ✅ Ensure Lightbox starts at the correct image
+        on={{
+          view: ({ index }) => {
+            setCurrentMediaIndex(index); // ✅ Updates current index properly
+          }
+        }}
+        plugins={[Zoom]}
+      />
+
 
 
         {/* File Preview Section */}
@@ -549,7 +567,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
                     {/* Centering the image in the preview */}
                     <div className="flex justify-center">
                       {/* Responsive size adjustments */}
-                      <div className="max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+                      <div className="max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mb-[5rem] max-lg:mb-[7rem] max-xl:mb-[5rem]">
                         {filePreview}
                       </div>
                     </div>
