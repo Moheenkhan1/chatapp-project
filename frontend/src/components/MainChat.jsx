@@ -113,7 +113,7 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
       }
   
     } catch (error) {
-      console.error("❌ Error marking messages as read:", error);
+      console.error(" Error marking messages as read:", error);
     }
   };
   
@@ -158,11 +158,12 @@ const MainChat = ({ selectedContact, currentUser, socket , setShowChat , showCha
         fileUrl: response.data.message.fileUrl, // ✅ Ensure correct file URL
         fileType: response.data.message.fileType,
       });
-  
+      
       setMessages("");
       setFile(null);
       setFilePreview(null);
-      setChat((prevChat) => [...prevChat, response.data]); // ✅ Update chat UI
+      setChat((prevChat) => [...prevChat, response.data]); 
+
     } catch (error) {
       console.error("Error sending message:", error.response?.data || error.message);
     }
