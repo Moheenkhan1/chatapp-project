@@ -52,7 +52,7 @@ const AiChat = ({ closeChat }) => {
   };
 
   return (
-    <div className="fixed bottom-0 right-0 bg-white p-5 shadow-md rounded-md w-[90%] max-w-[1310px] h-[100%]  max-[375px]:w-[380px] max-[430px]:w-[420px] max-[414px]:w-[400px] max-[768px]:w-[760px] max-[1024px]:w-[930px] flex flex-col">
+    <div className="fixed bottom-0 right-0 bg-white p-5 shadow-md rounded-md w-[74.9%] h-[100%]  max-[375px]:w-screen max-[430px]:w-screen max-[414px]:w-screen max-[768px]:w-screen max-[1024px]:w-[930px] flex flex-col">
       
       {/* Header */}
       <div className="flex justify-between items-center mb-3">
@@ -63,7 +63,7 @@ const AiChat = ({ closeChat }) => {
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 overflow-auto border border-blue-500 p-2 space-y-3">
+      <div className="flex-1 overflow-auto border-t border-blue-500 p-2 space-y-3">
         {chat.map((msg, index) => (
           <div key={index} className={`flex w-full ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             <div className={`max-w-[60%] p-3 rounded-lg break-words ${msg.role === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"}`}>
@@ -94,10 +94,11 @@ const AiChat = ({ closeChat }) => {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="flex-1 p-2 border border-blue-500 rounded-md text-black"
+          className="flex-1 p-3  border border-blue-500 rounded-md text-black"
           placeholder="Ask something..."
         />
-        <button onClick={sendMessage} className="bg-blue-500 text-white p-3 ml-2 rounded-md" disabled={loading}>
+        <button onClick={sendMessage} className="custom-class shadow-lg shadow-indigo-500/50 ml-3 max-sm:mr-5 w-[10%] max-sm:w-[25%]  p-[10px] rounded-[10px] text-[#fff] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2] max-sm:fixed max-sm:ml-[17.6rem] max-md:fixed max-md:ml-[17.6rem] max-lg:fixed max-lg:right-0   max-xl:fixed max-xl:right-10"
+         disabled={loading}>
           Send
         </button>
       </div>

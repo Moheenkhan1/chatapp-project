@@ -171,6 +171,7 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
     setSelectedContactId(contact._id);
     markMessagesAsRead(contact._id);
     setShowChat(true);
+    setShowAiChat(false)
   };
   
   const handlePhotoClick = (photoUrl, e) => {
@@ -213,11 +214,6 @@ const handleFileChange = (event) => {
 };
 
 
-
-
-
-
-
 // Handle profile update
   const handleProfileChange = async () => {
     if (!selectedFile) {
@@ -258,7 +254,9 @@ const handleFileChange = (event) => {
   <div className="flex justify-between items-center">
     <h2 className="text-[1.7rem] text-[#4169E1] font-extrabold">Chats</h2>
     <button
-      onClick={() => setShowAiChat(true)} // ✅ Open AI Chat
+      onClick={() =>
+        setShowAiChat(true)
+        } 
       className="flex items-center px-3 py-1 rounded-full shadow-lg"
     >
       <GiArtificialHive className="text-3xl text-blue-500"/>
