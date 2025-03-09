@@ -408,41 +408,37 @@ const handleFileChange = (e) => {
     <div className={`flex flex-col flex-1 bg-white ${showChat ? "max-sm:flex max-md:flex max-lg-flex max-xl-flex  max-[768px]:flex max-[1024px]:flex max-[912px]:flex max-[853px]:flex" : "max-sm:hidden max-md:hidden max-lg-hidden max-xl-hidden max-[768px]:hidden max-[1024px]:hidden max-[912px]:hidden max-[853px]:hidden"}`}>
       {/* Chat Header with Profile Picture */}
       
-      <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex items-center max-sm:h-[10%] max-md:h-[10%] max-lg:h-[8%] max-xl:h-[10%] max-sm:fixed  max-md:fixed max-lg:fixed max-xl:fixed max-sm:w-[100%] max-md:w-[100%] max-lg:w-[100%] max-xl:w-[100%]">
-      <button className="max-sm:block max-md:block max-lg-block max-xl-block max-[768px]:block max-[1024px]:block max-[912px]:block max-[853px]:block  hidden text-white text-xl mr-3 max-sm:fixed max-md:fixed max-lg:fixed max-xl:fixed" onClick={() => setShowChat(false)}>
-          <FiArrowLeft size={24} />
-        </button>
-        <div className="flex justify start gap-3 max-sm:ml-[2rem] max-md:ml-[1rem] max-lg:ml-[1rem] max-xl:ml-[1rem] max-sm:fixed max-md:fixed max-lg:fixed">
-          <img
-            className="w-[3.5rem] h-[3.5rem] rounded-full object-cover ml-6 max-sm:ml-4 max-md:ml-0 max-xl:ml-0 ring max-sm:h-[3rem] max-sm:w-[3rem] max-sm:mt-[-0.7rem]  max-md:mt-[-0.7rem]  max-lg:mt-[-0.7rem]  max-xl:mt-[-0.7rem] md:h-[3rem] md:w-[3rem] md:mt-0.9 md:ml-[1rem] max-lg:h-[3rem] max-lg:w-[3rem] max-sm:fixed max-md:fixed max-lg:fixed max-xl:fixed "
-            src={selectedContact.profilePicture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
-            alt="Profile"
-          />
-          <div className="flex gap-4 ml-4 max-md:ml-2 max-lg:ml-2 max-xl:ml-2" >
+      <div className="bg-[#385AC2] text-black p-4 border-b border-gray-700 flex items-center max-sm:h-[10%] max-md:h-[10%] max-lg:h-[8%] max-xl:h-[10%] max-sm:fixed max-md:fixed max-lg:fixed max-xl:fixed max-sm:w-[100%] max-md:w-[100%] max-lg:w-[100%] max-xl:w-[100%]">
+  <button
+    className="max-sm:block max-md:block max-lg-block max-xl-block max-[768px]:block max-[1024px]:block max-[912px]:block max-[853px]:block hidden text-white text-xl mr-3 max-sm:fixed max-md:fixed max-lg:fixed max-xl:fixed md:left-0"
+    onClick={() => setShowChat(false)}
+  >
+    <FiArrowLeft size={24} />
+  </button>
+  <div className="flex justify-start gap-3 max-sm:ml-[2rem] max-md:ml-[1rem] max-lg:ml-[1rem] max-xl:ml-[1rem] max-sm:fixed max-md:fixed max-lg:fixed">
+    <div className="relative w-[3.5rem] h-[3.5rem] max-sm:w-[3rem] max-sm:h-[3rem]">
+      {/* Profile Picture */}
+      <img
+        className="w-full h-full rounded-full object-cover ring"
+        src={selectedContact.profilePicture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
+        alt="Profile"
+      />
+      {/* Online/Offline Dot */}
+      <span
+        className={`absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-white max-sm:w-3 max-sm:h-3
+          ${users.some((user) => user._id === selectedContact._id && user.isOnline) 
+            ? "bg-green-500" 
+            : "bg-red-500"
+          }`}
+      ></span>
+    </div>
+    <div className="flex gap-4 ml-4 max-md:ml-2 max-lg:ml-2 max-xl:ml-2">
+      <h2 className="text-[1.2rem] font-bold text-white">{selectedContact.username}</h2>
+    </div>
+  </div>
+</div>
 
-          <h2 className="text-[1.2rem] font-bold text-white max-sm:ml-[4rem] max-sm:mt-[-0.7rem] max-md:ml-[4rem] max-md:mt-[-0.7rem] max-lg:ml-[4rem] max-lg:mt-[-0.7rem] max-xl:ml-[4rem] max-xl:mt-[-0.7rem] max-md:fixed max-lg:fixed max-xl:fixed ">{selectedContact.username}</h2>
-          <span
-              className={`max-sm:ml-[4rem] max-md:ml-[4rem] max-lg:ml-[4rem] max-xl:ml-[4rem] 
-                max-sm:mt-[0.8rem] max-md:mt-3 lg:mt-10 max-xl:mt-10
-                ${users.some((user) => user._id === selectedContact._id && user.isOnline)
-                  ? "text-green-500"
-                  : "text-red-500"
-                }`}
-            >
-              {users.some((user) => user._id === selectedContact._id && user.isOnline)
-                ? "Online"
-                : "Offline"
-              }
-            </span>
 
-
-
-          </div>
-        </div>
-        {/* <button className="text-cyan-400 hover:text-cyan-300">
-          <FiPhone size={24} />
-        </button> */}
-      </div>
 
       {/* Chat Messages */}
       <div className="flex-1 p-4 overflow-scroll bg-white text-black max-sm:mt-[5.5rem]  mb-[4rem] max-sm:mb-[5rem] max-md:mt-[6rem] max-md:mb-[5rem] max-lg:mt-[6rem] max-lg:mb-[6rem] max-xl:mt-[8rem] max-xl:mb-[6rem]">

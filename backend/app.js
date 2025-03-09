@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 const userRoutes = require("./routes/user.routes");
 const homeRoutes = require("./routes/home.routes");
 const messagesRoutes = require("./routes/messages.routes");
-const aiRoutes = require("./routes/ai.routes")
+const aiRoutes = require("./routes/ai.routes.js")
 const socket = require("socket.io");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -47,6 +47,7 @@ app.use("/user", userRoutes);
 app.use("/home", authMiddleware, homeRoutes);
 app.use("/messages", authMiddleware, messagesRoutes);
 app.use("/ai", authMiddleware, aiRoutes);
+
 
 // Start the server
 const PORT = process.env.PORT || 5000;

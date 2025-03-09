@@ -7,6 +7,8 @@ import { useOnlineUsers } from '../Contexts/OnlineUsersContext';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { UserDataContext } from '../Contexts/UserContext'
+import AiChat from "./AiChat";
+import { GiArtificialHive } from "react-icons/gi"
 
 const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , setShowChat , showChat , unreadCounts ,  setUnreadCounts ,selectedContactId,setSelectedContactId }) => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Access env variable
@@ -25,8 +27,10 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
   const [confirmPassword, setConfirmPassword] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [showFileInput, setShowFileInput] = useState(false);
+  const [showAiChat, setShowAiChat] = useState(false);
 
   const { onlineUsers } = useOnlineUsers(useOnlineUsers);
+
 
   const navigate = useNavigate();
   const settingsRef = useRef(null); 
@@ -202,10 +206,17 @@ const Sidebar = ({ setSelectedContact, currentUser, setCurrentUser , socket , se
     }
   };
 
+
   // Handle file selection
 const handleFileChange = (event) => {
   setSelectedFile(event.target.files[0]);
 };
+
+
+
+
+
+
 
 // Handle profile update
   const handleProfileChange = async () => {
@@ -243,23 +254,36 @@ const handleFileChange = (event) => {
 
   return (
     <div className={`relative w-1/4 max-md:w-full max-sm:w-full max-lg:w-full max-xl:w-full max-[768px]:w-full max-[1024px]:w-full max-[912px]:w-full max-[853px]:w-full bg-white p-5 shadow-md text-white overflow-auto ${showChat ? "max-md:hidden max-sm:hidden max-lg:hidden max-xl:hidden max-[768px]:hidden max-[1024px]:hidden max-[912px]:hidden max-[853px]:hidden" : "max-md:flex max-md:flex-col max-sm:flex max-sm:flex-col max-lg:flex max-lg:flex-col max-xl:flex max-xl:flex-col max-[768px]:flex max-[768px]:flex-col max-[1024px]:flex max-[1024px]:flex-col max-[912px]:flex max-[912px]:flex-col max-[853px]:flex max-[853px]:flex-col"}`}>
-<div className="fixed top-0 left-0 w-1/4 max-md:w-full bg-white p-5 shadow-md z-10">
-      <h2 className="text-[1.7rem] text-[#4169E1] font-extrabold mb-4">Chats</h2>
-      <input
-        type="text"
-        placeholder="Search chats..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-full p-2 bg-[#E8E8E8] text-black border border-gray-700 rounded-lg placeholder-black focus:outline-none focus:ring focus:ring-indigo-500"
-      />
-    </div>
+<div className="fixed top-0 left-0 lg:w-1/4 max-lg:w-full max-sm:w-full md:w-full bg-white p-5 shadow-md z-10">
+  <div className="flex justify-between items-center">
+    <h2 className="text-[1.7rem] text-[#4169E1] font-extrabold">Chats</h2>
+    <button
+      onClick={() => setShowAiChat(true)} // ✅ Open AI Chat
+      className="flex items-center px-3 py-1 rounded-full shadow-lg"
+    >
+      <GiArtificialHive className="text-3xl text-blue-500"/>
+    </button>
+
+  </div>
+
+  <input
+    type="text"
+    placeholder="Search chats..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="w-full p-2 bg-[#E8E8E8] text-black border border-gray-700 rounded-lg placeholder-black focus:outline-none focus:ring focus:ring-indigo-500 mt-3"
+  />
+
+  {showAiChat && <AiChat closeChat={() => setShowAiChat(false)} />}
+</div>
+
 
       {/* Contacts List */}
-      <ul className="mt-[30%] max-sm:mt-[40%] overflow-auto">
+      <ul className="lg:mt-[30%] max-sm:mt-[40%] md:mt-[17%] max-lg:mt-[17%] overflow-auto">
         {filteredContacts.map((contact) => (
           <li
             key={contact._id}
-            className={`flex items-center space-x-4 mb-1 shadow-md p-3  cursor-pointer transition-colors duration-300 ${
+            className={`flex items-center space-x-4 mb-1 shadow-md p-3 cursor-pointer transition-colors duration-300 ${
               selectedContactId === contact._id
                 ? "bg-[#385AC2] text-white"
                 : "bg-[#E8E8E8] text-black hover:bg-white hover:text-[#385AC2]"
@@ -316,7 +340,7 @@ const handleFileChange = (event) => {
             
 
             <button
-                className="custom-class w-[30%] shadow-lg shadow-indigo-500/50 mt-3 p-[10px] rounded-[10px] text-[white] text-[1rem] bg-[#385AC2]"
+                className="custom-class w-[40%] shadow-lg shadow-indigo-500/50 mt-3 p-[10px] rounded-[10px] text-[white] text-[1rem] bg-[#385AC2]"
                 onClick={() => setShowFileInput(true)}
               >
                 Update Profile
@@ -327,6 +351,7 @@ const handleFileChange = (event) => {
       <button className=" text-[#385AC2]" onClick={() => setShowFileInput(false)}>
         <FaTimes size={20} />
       </button>
+      
       <input
     type="file"
     accept="image/*"
@@ -353,13 +378,13 @@ const handleFileChange = (event) => {
           </div>
           <div className="flex flex-col" >
           <button
-                className="custom-class w-[70%] shadow-lg shadow-indigo-500/50 mt-6 p-[10px] rounded-[10px] text-[white] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2]"
+                className="custom-class w-[50%] shadow-lg shadow-indigo-500/50 mt-6 p-[10px] rounded-[10px] text-[white] text-[1.2rem] bg-[royalblue] hover:bg-[#385AC2]"
                 onClick={handleChangePasswordButton}
               >
                 Change Password
               </button>
               <button
-                className="custom-class w-[40%] shadow-lg shadow-indigo-500/50 mt-6 p-[10px] rounded-[10px] text-[white] text-[1.2rem] bg-[red] hover:bg-red-800"
+                className="custom-class w-[50%] shadow-lg shadow-indigo-500/50 mt-6 p-[10px] rounded-[10px] text-[white] text-[1.2rem] bg-[red] hover:bg-red-800"
                 onClick={handleLogout}
               >
                 Logout
