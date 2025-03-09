@@ -11,6 +11,8 @@ const AiChat = ({ closeChat }) => {
   const sendMessage = async () => {
     if (!message.trim()) return;
 
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
     const userMessage = { role: "user", content: message };
     setChat((prevChat) => [...prevChat, userMessage]);
     setMessage("");
@@ -24,13 +26,13 @@ const AiChat = ({ closeChat }) => {
         ?.split("=")[1];
 
       const res = await axios.post(
-        "http://localhost:5000/ai/ai-chat",
+        `${API_BASE_URL}/ai/ai-chat`,
         { message },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
+          withCredentials: true
         }
       );
 
