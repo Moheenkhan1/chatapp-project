@@ -11,7 +11,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const Message = require("./models/messages.model");
 const authMiddleware = require("./middleware/authMiddleware");
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
+
 const connectTodb = require("./config/db");
 const path = require("path");
 const User = require('./models/user')
