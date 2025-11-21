@@ -258,14 +258,14 @@ module.exports.loginUser = async (req, res) => {
       .sign(secret);
 
     // Set cookie (keep same cookie options as before)
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true, // set to true if using HTTPS (recommended in production)
-      maxAge: 3600000, // 1 hour
-      sameSite: 'None',
-    });
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true, // set to true if using HTTPS (recommended in production)
+        maxAge: 3600000, // 1 hour
+        sameSite: 'None',
+      });
 
-    res.status(200).json({ token, user });
+      res.status(200).json({ token, user });
   } catch (error) {
     return res.status(500).json({ message: 'Server Error' });
   }

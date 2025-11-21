@@ -31,6 +31,8 @@
 const { jwtVerify } = require('jose');
 const User = require('../models/user');
 
+
+
 // Helper to get secret key
 function getJwtSecret() {
   if (!process.env.JWT_SECRET) {
@@ -40,6 +42,9 @@ function getJwtSecret() {
 }
 
 const authMiddleware = async (req, res, next) => {
+  // at the top of the middleware function:
+if (req.method === 'OPTIONS') return next();
+
   try {
     const token = req.cookies.token || req.header('Authorization')?.replace('Bearer ', '');
 
