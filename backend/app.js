@@ -42,36 +42,45 @@ const app = express();
 // }; 
 
 
+app.set('trust proxy', 1);
 
-const isProd = process.env.APP_ENV === 'production';
-
-const prodOrigins = (process.env.FRONTEND_URI || '')
-.split(',')
-.map(o => o.trim())
-.filter(Boolean);
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow non-browser clients (Postman, curl, server-to-server)
-    if (!origin) return callback(null, true);
-    
-    // Development: allow ALL origins
-    if (!isProd) {
-      return callback(null, true);
-    }
-
-    // Production: allow only configured frontend(s)
-    if (prodOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    
-    // Production: silently block others (NO errors, NO redirects)
-    return callback(null, false);
-  },
+app.use(cors({
+  origin: `${process.env.FRONTEND_URI}`,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
+}));
+
+app.options('*', cors());
+
+
+// const isProd = process.env.APP_ENV === 'production';
+
+// const prodOrigins = (process.env.FRONTEND_URI || '')
+// .split(',')
+// .map(o => o.trim())
+// .filter(Boolean);
+
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     // Allow non-browser clients (Postman, curl, server-to-server)
+//     if (!origin) return callback(null, true);
+    
+//     // Development: allow ALL origins
+//     if (!isProd) {
+//       return callback(null, true);
+//     }
+
+//     // Production: allow only configured frontend(s)
+//     if (prodOrigins.includes(origin)) {
+//       return callback(null, true);
+//     }
+    
+//     // Production: silently block others (NO errors, NO redirects)
+//     return callback(null, false);
+//   },
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+// };
 
 
 
