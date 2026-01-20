@@ -87,9 +87,9 @@ app.options('*', cors());
 
 app.set('trust proxy', 1);
 
-// CORS MUST come first
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+// // CORS MUST come first
+// app.use(cors(corsOptions));
+// app.options('*', cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
