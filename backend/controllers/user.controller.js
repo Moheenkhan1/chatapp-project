@@ -170,7 +170,7 @@
 
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const { SignJWT, jwtVerify } = require('jose');
+// const { SignJWT, jwtVerify } = require('jose');
 const User = require('../models/user.js');
 const authMiddleware = require('../middleware/authMiddleware.js');
 const multer = require('multer');
@@ -186,6 +186,13 @@ function getJwtSecret() {
   }
   return Buffer.from(process.env.JWT_SECRET);
 }
+
+let SignJWT, jwtVerify;
+
+(async () => {
+  ({ SignJWT, jwtVerify } = await import('jose'));
+})();
+
 
 module.exports.registerUser = async (req, res) => {
   const { username, email, password } = req.body;
