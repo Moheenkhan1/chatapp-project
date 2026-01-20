@@ -10,11 +10,11 @@ function getJwtSecret() {
 
 const authMiddleware = async (req, res, next) => {
   // at the top of the middleware function:
-  const { jwtVerify } = await import('jose');
+  if (req.method === 'OPTIONS') return next();
   
-if (req.method === 'OPTIONS') return next();
-
+  
   try {
+    const { jwtVerify } = await import('jose');
     const token = req.cookies.token || req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {

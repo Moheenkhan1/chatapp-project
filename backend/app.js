@@ -21,59 +21,57 @@ dotenv.config();
 const app = express();
 
 // Middleware and configurations
-app.use(express.json());
-app.use(cookieParser());
 // ---- robust CORS setup (put this near the top, before routes) ----
-const allowedOrigins = (process.env.FRONTEND_URI || '')
-  .split(',')
-  .map(s => s.trim())
-  .filter(Boolean);
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    // allow requests with no origin (e.g. curl, Postman, mobile apps)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    console.warn('Blocked CORS origin:', origin);
-    return callback(new Error('Not allowed by CORS'), false);
-  },
-  credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
-  preflightContinue: false,
-}; 
-
-
-
-// const isProd = process.env.APP_ENV === 'production';
-
-// const prodOrigins = (process.env.FRONTEND_URI || '')
+// const allowedOrigins = (process.env.FRONTEND_URI || '')
 //   .split(',')
-//   .map(o => o.trim())
+//   .map(s => s.trim())
 //   .filter(Boolean);
 
 // const corsOptions = {
-//   origin: (origin, callback) => {
-//     // Allow non-browser clients (Postman, curl, server-to-server)
-//     if (!origin) return callback(null, true);
+  //   origin: (origin, callback) => {
+    //     // allow requests with no origin (e.g. curl, Postman, mobile apps)
+    //     if (!origin) return callback(null, true);
+    //     if (allowedOrigins.includes(origin)) return callback(null, true);
+    //     console.warn('Blocked CORS origin:', origin);
+    //     return callback(new Error('Not allowed by CORS'), false);
+    //   },
+    //   credentials: true,
+    //   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+//   preflightContinue: false,
+// }; 
 
-//     // Development: allow ALL origins
-//     if (!isProd) {
-//       return callback(null, true);
-//     }
 
-//     // Production: allow only configured frontend(s)
-//     if (prodOrigins.includes(origin)) {
-//       return callback(null, true);
-//     }
 
-//     // Production: silently block others (NO errors, NO redirects)
-//     return callback(null, false);
-//   },
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-// };
+const isProd = process.env.APP_ENV === 'production';
+
+const prodOrigins = (process.env.FRONTEND_URI || '')
+.split(',')
+.map(o => o.trim())
+.filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow non-browser clients (Postman, curl, server-to-server)
+    if (!origin) return callback(null, true);
+    
+    // Development: allow ALL origins
+    if (!isProd) {
+      return callback(null, true);
+    }
+
+    // Production: allow only configured frontend(s)
+    if (prodOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // Production: silently block others (NO errors, NO redirects)
+    return callback(null, false);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
 
 
@@ -84,6 +82,8 @@ app.set('trust proxy', 1);
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
+app.use(express.json());
+app.use(cookieParser());
 // MongoDB connection
 
 connectTodb();
