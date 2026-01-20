@@ -85,7 +85,7 @@ app.options('*', cors());
 
 
 
-app.set('trust proxy', 1);
+// app.set('trust proxy', 1);
 
 // // CORS MUST come first
 // app.use(cors(corsOptions));
