@@ -49,7 +49,14 @@
 
 const Message = require('../models/messages.model.js');
 const User = require('../models/user.js');
-const { jwtVerify } = require('jose');
+// const { jwtVerify } = require('jose');
+
+let SignJWT, jwtVerify;
+
+(async () => {
+  ({ SignJWT, jwtVerify } = await import('jose'));
+})();
+
 
 // Helper to get secret key
 function getJwtSecret() {
